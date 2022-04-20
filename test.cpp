@@ -5,12 +5,13 @@ using namespace std;
 
 int main()
 {
-    int a_num[8] = {3, 2, 1, 5, 4, 3, 2, 1};
-    int b_num[5] = {5, 4, 3, 2, 1};
+    int a_num[1] = {5};
+    int b_num[1] = {3};
 
-    Number a(a_num, 8, true);
-    Number b(b_num, 5, true);
+    Number a(a_num, 1, true);
+    Number b(b_num, 1, false);
 
-    Number t = a * b;
+    Number t = b + a;
+
     t.printNumber();
 }

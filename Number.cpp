@@ -22,7 +22,21 @@ Number &Number::operator=(const Number &number)
 
     return *this;
 }
-
+Number Number::factorial()
+{
+    int x[] = {1, 0};
+    Number temp = *this;
+    Number times = *this;
+    Number one(x, 1, true);
+    Number zero(x + 1, 1, true);
+    times = times - one;
+    while (times > zero)
+    {
+        temp = temp * times;
+        times = times - one;
+    }
+    return temp;
+}
 Number Number::operator*(const Number &number)
 {
     bool isPos = true;
@@ -75,6 +89,8 @@ Number Number::operator*(const Number &number)
             current = next;
             next = 0;
         }
+        current = 0;
+        next = 0;
     }
     return Number(product, newSize, isPos);
 }
@@ -88,19 +104,27 @@ Number Number::operator-(const Number &number)
             if (number.isPositive)
                 return this->subtract(number);
             else
-                return this->operator+(number);
+            {
+                Number temp = number;
+                temp.changeSign();
+                return this->add(temp);
+            }
         }
         else
         {
-            if (this->isPositive)
+            if (number.isPositive)
             {
-                Number temp = this->subtract(number);
-                temp.changeSign();
-                return temp;
+                Number temp1 = *this;
+                Number temp2 = number;
+                temp1 = temp2.subtract(temp1);
+                temp1.changeSign();
+                return temp1;
             }
             else
             {
-                return this->operator+(number);
+                Number temp = number;
+                temp.changeSign();
+                return temp.add(*this);
             }
         }
     }
@@ -110,28 +134,42 @@ Number Number::operator-(const Number &number)
         {
             if (number.isPositive)
             {
-                Number temp = this->operator+(number);
-                temp.changeSign();
-                return temp;
+                Number temp1 = *this;
+                temp1.changeSign();
+                temp1 = temp1.add(number);
+                temp1.changeSign();
+                return temp1;
             }
             else
             {
-                Number temp = this->subtract(number);
-                temp.changeSign();
-                return temp;
+                Number temp1 = *this;
+                Number temp2 = number;
+                temp1.changeSign();
+                temp2.changeSign();
+                temp1 = temp1.subtract(temp2);
+                temp1.changeSign();
+                return temp1;
             }
         }
         else
         {
-            if (this->isPositive)
+            if (number.isPositive)
             {
-                Number temp = this->operator+(number);
-                temp.changeSign();
-                return temp;
+                Number temp1 = *this;
+                Number temp2 = number;
+                temp1.changeSign();
+                temp1 = temp2.add(temp1);
+                temp1.changeSign();
+                return temp1;
             }
             else
             {
-                return this->subtract(number);
+                Number temp1 = *this;
+                Number temp2 = number;
+                temp1.changeSign();
+                temp2.changeSign();
+                temp1 = temp2.subtract(temp1);
+                return temp1;
             }
         }
     }
@@ -149,20 +187,21 @@ Number Number::operator+(const Number &number)
             {
                 Number temp = number;
                 temp.changeSign();
-                return this->operator-(temp);
+                return this->subtract(temp);
             }
         }
         else
         {
             if (number.isPositive)
-                return this->add(number);
+                return number.add(*this);
             else
             {
-                Number temp = number;
-                temp.changeSign();
-                temp = temp - *this;
-                temp.changeSign();
-                return temp;
+                Number temp1 = *this;
+                Number temp2 = number;
+                temp2.changeSign();
+                temp1 = temp2.subtract(temp1);
+                temp1.changeSign();
+                return temp1;
             }
         }
     }
@@ -197,7 +236,6 @@ Number Number::operator+(const Number &number)
                 Number temp2 = number;
                 temp1.changeSign();
                 temp1 = temp2.subtract(temp1);
-                temp1.changeSign();
                 return temp1;
             }
             else
@@ -206,7 +244,7 @@ Number Number::operator+(const Number &number)
                 Number temp2 = number;
                 temp1.changeSign();
                 temp2.changeSign();
-                temp1 = temp1.add(temp2);
+                temp1 = temp2.add(temp1);
                 temp1.changeSign();
                 return temp1;
             }
@@ -220,10 +258,10 @@ Number Number::add(const Number &number) const
 // and this is biger than number
 // Postcondition: returns this + number (always positive)
 {
-    int i = 0,
-        j = 0, k = 0;
-    int digit_temp[this->size + 1];
-    for (int x = 0; x < this->size; x++)
+    int i = 0, j = 0, k = 0;
+    int digit_size = this->size + 1;
+    int *digit_temp = new int[digit_size];
+    for (int x = 0; x < digit_size; x++)
         digit_temp[x] = 0;
 
     bool carry = false;
@@ -262,21 +300,23 @@ Number Number::add(const Number &number) const
         i++;
         k++;
     }
+    if (carry)
+        digit_temp[k] = 1;
 
     // Remove useless zeros in the front
     int countZeros = 0;
-    for (int x = this->size; x >= 0; x--)
+    for (int x = digit_size - 1; x >= 0; x--)
     {
         if (digit_temp[x] == 0)
             countZeros++;
         else
             break;
     }
-    int temp[this->size - countZeros];
-    for (int x = 0; x < this->size - countZeros; x++)
+    int *temp = new int[digit_size - countZeros];
+    for (int x = 0; x < digit_size - countZeros; x++)
         temp[x] = digit_temp[x];
 
-    return Number(temp, this->size - countZeros, true);
+    return Number(temp, digit_size - countZeros, true);
 }
 
 Number Number::subtract(const Number &number)
@@ -285,13 +325,13 @@ Number Number::subtract(const Number &number)
 // Postcondition: return the this - number (always positive)
 {
     int i = 0, j = 0, k = 0;
-    int dig_temp[this->size];
+    int *dig_temp = new int[this->size];
     for (int x = 0; x < this->size; x++)
         dig_temp[x] = 0;
 
     while (i < this->size && j < number.size)
     {
-        if (this->digits[i] > number.digits[j])
+        if (this->digits[i] >= number.digits[j])
             dig_temp[k] = this->digits[i] - number.digits[j];
         else
         {
@@ -327,7 +367,12 @@ Number Number::subtract(const Number &number)
         else
             break;
     }
-    int temp[this->size - countZeros];
+    // If the number is 0, remain one position
+    if (this->size == countZeros)
+        countZeros--;
+
+    // Make a copy without the useless zeros
+    int *temp = new int[this->size - countZeros];
     for (int x = 0; x < this->size - countZeros; x++)
         temp[x] = dig_temp[x];
 

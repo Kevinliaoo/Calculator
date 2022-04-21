@@ -6,12 +6,12 @@ using namespace std;
 int main()
 {
     int a_num[1] = {5};
-    int b_num[1] = {3};
+    int b_num[1] = {5};
 
     Number a(a_num, 1, true);
-    Number b(b_num, 1, false);
+    Number b(b_num, 1, true);
 
-    Number t = b + a;
+    Number t = a.factorial();
 
     t.printNumber();
 }

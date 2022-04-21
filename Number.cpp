@@ -37,6 +37,30 @@ Number Number::factorial()
     }
     return temp;
 }
+
+int Number::operator[](int index) const
+// This function returns the digit at a position
+// Precondition: index is the number of the digit, it must be
+// greater or equal than 0 and smaller than the number's size
+{
+    return this->digits[this->size - 1 - index];
+}
+
+bool Number::operator==(const Number &number) const
+{
+    if (this->size != number.size)
+        return false;
+
+    if (this->isPositive != number.isPositive)
+        return false;
+
+    for (int i = 0; i < this->size; i++)
+        if (this->digits[i] != number.digits[i])
+            return false;
+
+    return true;
+}
+
 Number Number::operator*(const Number &number)
 {
     bool isPos = true;

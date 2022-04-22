@@ -44,7 +44,7 @@ int Number::operator[](int index) const
     return this->digits[this->size - 1 - index];
 }
 
-bool Number::operator>(const Number &number)
+bool Number::operator>(const Number &number) const
 // This comparison does not consider sign
 {
     if (this->size > number.size)
@@ -297,17 +297,20 @@ Number Number::operator+(const Number &number)
 
 Number Number::operator/(const Number &number)
 {
+
     int a[1] = {0};
     Number zero(a, 1, true);
     int b[1] = {1};
     Number one(b, 1, true);
 
+    if (number == zero)
+    {
+        cout << "Error: Can not divide by zero!" << endl;
+        return zero;
+    }
+
     if (this->operator==(number))
         return one;
-
-    // number is greater than this, so I return zero
-    if (!this->operator>(number))
-        return zero;
 
     Number temp = *this;
     Number temp2 = number;
@@ -329,6 +332,12 @@ Number Number::operator/(const Number &number)
         else
             temp2.changeSign();
     }
+
+    if (temp == temp2)
+        return Number(b, 1, aa);
+    // number is greater than this, so I return zero
+    if (!(temp > temp2))
+        return zero;
 
     while (temp > temp2)
     {
@@ -447,6 +456,10 @@ Number Number::add(const Number &number) const
         else
             break;
     }
+
+    if (digit_size == countZeros)
+        countZeros--;
+
     int *temp = new int[digit_size - countZeros];
     for (int x = 0; x < digit_size - countZeros; x++)
         temp[x] = digit_temp[x];
@@ -542,7 +555,7 @@ bool Number::getSign()
     return this->isPositive;
 }
 
-void Number::printNumber()
+void Number::printNumber() const
 // Display the number
 {
     if (!this->isPositive)
@@ -553,12 +566,13 @@ void Number::printNumber()
 }
 
 // Friend functions
+
 Number getGCD(const Number &num1, const Number &num2)
 // Get the Greatest Common Divisor between two numbers
 // Precondition: num1 and num2 are different positive numbers
 {
-    // if (!num1.isPositive || !num2.isPositive)
-    // cout << "Error: Can not get GCD of negative values!" << endl;
+    if (!num1.isPositive || !num2.isPositive)
+        cout << "Error: Can not get GCD of negative values!" << endl;
 
     int a[1] = {0};
     Number zero(a, 1, true);
@@ -661,4 +675,14 @@ void Decimal::printFraction()
     cout << "******" << endl;
     cout << "   ";
     this->denominator.printNumber();
+}
+
+bool Decimal::isInteger()
+{
+    int a[1] = {0};
+    Number zero(a, 1, true);
+    Number reminder = this->numerator % this->denominator;
+    if (reminder == zero)
+        return true;
+    return false;
 }

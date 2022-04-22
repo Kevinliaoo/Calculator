@@ -23,12 +23,12 @@ public:
     Number operator+(const Number &number);
     Number operator%(const Number &number);
     Number operator/(const Number &number);
-    bool operator>(const Number &number);
+    bool operator>(const Number &number) const;
     bool operator==(const Number &number) const;
     int operator[](int index) const;
 
     Number factorial();
-    void printNumber();
+    void printNumber() const;
     void changeSign();
     bool getSign();
 
@@ -52,4 +52,5 @@ public:
 
     void printFraction();
     void printDecimal();
+    bool isInteger();
 };

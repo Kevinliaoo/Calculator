@@ -22,6 +22,7 @@ Number &Number::operator=(const Number &number)
 
     return *this;
 }
+
 Number Number::factorial()
 {
     int x[] = {1, 0};
@@ -274,6 +275,99 @@ Number Number::operator+(const Number &number)
             }
         }
     }
+}
+
+Number Number::operator/(const Number &number)
+{
+    int a[1] = {0};
+    Number zero(a, 1, true);
+
+    // number is greater than this, so I return zero
+    if (!this->operator>(number))
+        return zero;
+
+    Number temp = *this;
+
+    int b[1] = {1};
+    Number one(b, 1, true);
+
+    if (this->operator==(number))
+        return one;
+
+    Number temp2 = number;
+
+    bool aa = true;
+    if (temp.isPositive)
+    {
+        if (!temp2.isPositive)
+        {
+            temp2.changeSign();
+            aa = false;
+        }
+    }
+    else
+    {
+        temp.changeSign();
+        if (number.isPositive)
+            aa = false;
+        else
+            temp2.changeSign();
+    }
+
+    while (temp > temp2)
+    {
+        zero = zero + one;
+        temp = temp - temp2;
+    }
+
+    if (temp == temp2)
+        zero = zero + one;
+
+    if (!aa)
+        zero.changeSign();
+
+    return zero;
+}
+
+Number Number::operator%(const Number &number)
+{
+    int a[1] = {0};
+    Number zero(a, 1, true);
+
+    if (this->operator==(number))
+        return zero;
+
+    // number is greater than this, so I return zero
+    if (!this->operator>(number))
+        return *this;
+
+    Number temp = *this;
+    Number temp2 = number;
+
+    bool aa = true;
+    if (temp.isPositive)
+    {
+        if (!temp2.isPositive)
+            temp2.changeSign();
+    }
+    else
+    {
+        aa = false;
+        temp.changeSign();
+        if (!temp2.isPositive)
+            temp2.changeSign();
+    }
+
+    while (temp > temp2)
+        temp = temp - temp2;
+
+    if (temp == temp2)
+        return zero;
+
+    if (!aa)
+        temp.changeSign();
+
+    return temp;
 }
 
 Number Number::add(const Number &number) const

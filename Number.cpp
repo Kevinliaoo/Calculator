@@ -498,6 +498,7 @@ Number Number::subtract(const Number &number)
 }
 
 void Number::changeSign()
+// Changes the sign of the number
 {
     this->isPositive = !this->isPositive;
 }
@@ -531,4 +532,30 @@ void Number::printNumber()
     for (int i = 0; i < this->size; i++)
         cout << this->digits[this->size - 1 - i];
     cout << endl;
+}
+
+Number getGCD(const Number &num1, const Number &num2)
+// Get the Greatest Common Divisor between two numbers
+// Precondition: num1 and num2 are positive numbers
+{
+    // if (!num1.isPositive || !num2.isPositive)
+    // cout << "Error: Can not get GCD of negative values!" << endl;
+
+    int a[1] = {0};
+    Number zero(a, 1, true);
+
+    if (num2 == zero)
+        return num1;
+
+    Number temp = num1;
+
+    return getGCD(num2, temp % num2);
+}
+
+Number getLCM(const Number &num1, const Number &num2)
+// Get the Least Common Multiple between two numbers
+// Precondition: num1 and num2 are positive numbers
+{
+    Number temp = num1;
+    return (temp / getGCD(num1, num2)) * num2;
 }

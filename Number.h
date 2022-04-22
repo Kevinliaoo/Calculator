@@ -28,6 +28,7 @@ public:
     int operator[](int index) const;
 
     Number factorial();
+    Number power(const Number &times);
     void printNumber() const;
     void changeSign();
     bool getSign();

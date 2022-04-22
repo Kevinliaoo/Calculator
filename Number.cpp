@@ -600,6 +600,80 @@ int Number::getSize()
     return this->digits.size();
 }
 
+Number Number::power(const Number &times)
+{
+    int x[] = {1, 0, 2};
+    Number one(x, 1, true);
+    Number temp = one;
+    Number add(x + 1, 1, true);
+    if (times == add)
+    {
+        temp = one;
+        return temp;
+    }
+    // this is negative
+    if (!this->isPositive)
+    {
+        Number two(x + 2, 1, true);
+        if (add > times) // negative times
+        {
+            Number negative = times;
+            negative.changeSign();
+            if (negative % two == add)
+            {
+                temp.isPositive == true;
+                while (negative > add)
+                {
+                    temp = temp / temp;
+                    add = add + one;
+                }
+                return temp;
+            }
+            while (negative > add)
+            {
+                temp = temp / temp;
+                add = add + one;
+            }
+            return temp;
+        }
+        Number positive = times;
+        if (positive % two == add)
+        {
+            temp.isPositive == true;
+            while (positive > add)
+            {
+                temp = temp * *this;
+                add = add + one;
+            }
+            return temp;
+        }
+        while (positive > add)
+        {
+            temp = temp * *this;
+            add = add + one;
+        }
+        return temp;
+    }
+    // this is positive
+    if (add > times)
+    {
+        Number negative = times;
+        negative.changeSign();
+        while (negative > add)
+        {
+            temp = temp / temp;
+            add = add + one;
+        }
+        return temp;
+    }
+    while (times > add)
+    {
+        temp = temp * *this;
+        add = add + one;
+    }
+    return temp;
+}
+
 // Friend functions
 
 Number getGCD(const Number &num1, const Number &num2)

@@ -9,6 +9,7 @@ int main()
     int a_num[1] = {1};
     int b_num[1] = {5};
     int c_num[1] = {3};
+    int z_num[1] = {0};
 
     Number a(a_num, 1, true);
     Number b(b_num, 1, false);
@@ -19,7 +20,9 @@ int main()
     Decimal decb(a, c);
 
     Number zero;
+    Number t(z_num, 1, false);
 
-    Number t = d / b;
+    t = t / t;
+
     t.printNumber();
 }

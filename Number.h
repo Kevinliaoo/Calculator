@@ -31,6 +31,7 @@ public:
     void printNumber() const;
     void changeSign();
     bool getSign();
+    bool isEqualZero();
 
     friend Number getGCD(const Number &num1, const Number &num2);
     friend Number getLCM(const Number &num1, const Number &num2);

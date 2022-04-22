@@ -67,6 +67,11 @@ bool Number::operator>(const Number &number) const
 
 bool Number::operator==(const Number &number) const
 {
+    // 0 is equal to -0
+    if (this->size == number.size && this->size == 1)
+        if (this->digits[0] == number.digits[0] && this->digits[0] == 0)
+            return true;
+
     if (this->size != number.size)
         return false;
 
@@ -563,6 +568,17 @@ void Number::printNumber() const
     for (int i = 0; i < this->size; i++)
         cout << this->digits[this->size - 1 - i];
     cout << endl;
+}
+
+bool Number::isEqualZero()
+// Returns true if the number is zero, ignoring sign
+{
+    if (this->size == 1)
+    {
+        if (this->digits[0] == 0)
+            return true;
+    }
+    return false;
 }
 
 // Friend functions

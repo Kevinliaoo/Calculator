@@ -5,15 +5,17 @@ using namespace std;
 
 int main()
 {
-    int a_num[2] = {5, 1};
-    int b_num[2] = {0, 2};
+    int a_num[1] = {1};
+    int b_num[1] = {5};
+    int c_num[1] = {3};
 
-    Number a(a_num, 2, true);
-    Number b(b_num, 2, true);
+    Number a(a_num, 1, true);
+    Number b(b_num, 1, true);
+    Number c(c_num, 1, true);
 
-    a.printNumber();
-    b.printNumber();
+    Decimal deca(a, b);
+    Decimal decb(a, c);
 
-    Number c = getLCM(a, b);
-    c.printNumber();
+    Decimal t = deca - decb;
+    t.printFraction();
 }

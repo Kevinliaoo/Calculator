@@ -12,9 +12,9 @@ private:
 
     Number subtract(const Number &number);  // Helper function for operator-
     Number add(const Number &number) const; // Helper function for operator+
-    void changeSign();
 
 public:
+    Number();
     Number(int *a, int size, bool isPositive);
 
     Number &operator=(const Number &number);
@@ -29,7 +29,27 @@ public:
 
     Number factorial();
     void printNumber();
+    void changeSign();
+    bool getSign();
 
     friend Number getGCD(const Number &num1, const Number &num2);
     friend Number getLCM(const Number &num1, const Number &num2);
+};
+
+class Decimal
+{
+private:
+    // Both numerator and denominator are stored as positive numbers
+    Number numerator;
+    Number denominator;
+    bool isPositive; // The numerator's sign determines the Decimal's sign
+
+public:
+    Decimal(const Number &num, const Number &den);
+
+    Decimal operator+(const Decimal &num);
+    Decimal operator-(const Decimal &num);
+
+    void printFraction();
+    void printDecimal();
 };

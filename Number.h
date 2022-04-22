@@ -32,6 +32,8 @@ public:
     void changeSign();
     bool getSign();
     bool isEqualZero();
+    void insertFront(int d);
+    int getSize();
 
     friend Number getGCD(const Number &num1, const Number &num2);
     friend Number getLCM(const Number &num1, const Number &num2);

@@ -581,6 +581,25 @@ bool Number::isEqualZero()
     return false;
 }
 
+void Number::insertFront(int d)
+// Inserts a digit at the end of the numer
+// (at the front of the vector digits)
+{
+    vector<int> new_digits;
+    new_digits.push_back(d);
+    for (int i = 0; i < this->digits.size(); i++)
+        new_digits.push_back(this->digits[i]);
+
+    this->digits.clear();
+    this->size = new_digits.size();
+    this->digits = new_digits;
+}
+
+int Number::getSize()
+{
+    return this->digits.size();
+}
+
 // Friend functions
 
 Number getGCD(const Number &num1, const Number &num2)
@@ -691,6 +710,22 @@ void Decimal::printFraction()
     cout << "******" << endl;
     cout << "   ";
     this->denominator.printNumber();
+}
+
+void Decimal::printDecimal()
+{
+    if (!this->isPositive)
+        cout << "-";
+
+    int noZeroPositions = this->numerator.getSize() - this->denominator.getSize() + 1;
+
+    for (int i = 0; i < this->numerator.getSize(); i++)
+    {
+        if (i == noZeroPositions)
+            cout << ".";
+        cout << this->numerator[i];
+    }
+    cout << endl;
 }
 
 bool Decimal::isInteger()

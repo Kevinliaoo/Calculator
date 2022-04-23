@@ -5,6 +5,6 @@ using namespace std;
 
 int main()
 {
-    Integer a;
-    Integer b;
+    Number a;
+    Number b;
 }

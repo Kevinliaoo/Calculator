@@ -6,7 +6,7 @@ using namespace std;
 /* ********** NUMBER ********** */
 
 // Constructors
-Integer::Integer()
+Number::Number()
 // Default constructor: build zero
 {
     this->digits.push_back(0);
@@ -14,7 +14,7 @@ Integer::Integer()
     this->size = 1;
 }
 
-Integer::Integer(int *a, int size, bool isPositive)
+Number::Number(int *a, int size, bool isPositive)
 // Precondition: a must be clean and reverted
 {
     this->isPositive = isPositive;
@@ -25,7 +25,7 @@ Integer::Integer(int *a, int size, bool isPositive)
 }
 
 // Operator overloading
-Integer &Integer::operator=(const Integer &number)
+Number &Number::operator=(const Number &number)
 {
     this->digits.clear();
     this->size = number.size;
@@ -36,7 +36,7 @@ Integer &Integer::operator=(const Integer &number)
     return *this;
 }
 
-int Integer::operator[](int index) const
+int Number::operator[](int index) const
 // This function returns the digit at a position
 // Precondition: index is the number of the digit, it must be
 // greater or equal than 0 and smaller than the number's size
@@ -44,7 +44,7 @@ int Integer::operator[](int index) const
     return this->digits[this->size - 1 - index];
 }
 
-bool Integer::operator>(const Integer &number) const
+bool Number::operator>(const Number &number) const
 // This comparison does not consider sign
 {
     if (this->size > number.size)
@@ -65,7 +65,7 @@ bool Integer::operator>(const Integer &number) const
     return false;
 }
 
-bool Integer::operator==(const Integer &number) const
+bool Number::operator==(const Number &number) const
 {
     // 0 is equal to -0
     if (this->size == number.size && this->size == 1)
@@ -85,7 +85,7 @@ bool Integer::operator==(const Integer &number) const
     return true;
 }
 
-Integer Integer::operator*(const Integer &number)
+Number Number::operator*(const Number &number)
 {
     bool isPos = true;
     if (!this->isPositive)
@@ -140,10 +140,10 @@ Integer Integer::operator*(const Integer &number)
         current = 0;
         next = 0;
     }
-    return Integer(product, newSize, isPos);
+    return Number(product, newSize, isPos);
 }
 
-Integer Integer::operator-(const Integer &number)
+Number Number::operator-(const Number &number)
 {
     if (this->isPositive)
     {
@@ -153,7 +153,7 @@ Integer Integer::operator-(const Integer &number)
                 return this->subtract(number);
             else
             {
-                Integer temp = number;
+                Number temp = number;
                 temp.changeSign();
                 return this->add(temp);
             }
@@ -162,15 +162,15 @@ Integer Integer::operator-(const Integer &number)
         {
             if (number.isPositive)
             {
-                Integer temp1 = *this;
-                Integer temp2 = number;
+                Number temp1 = *this;
+                Number temp2 = number;
                 temp1 = temp2.subtract(temp1);
                 temp1.changeSign();
                 return temp1;
             }
             else
             {
-                Integer temp = number;
+                Number temp = number;
                 temp.changeSign();
                 return temp.add(*this);
             }
@@ -182,7 +182,7 @@ Integer Integer::operator-(const Integer &number)
         {
             if (number.isPositive)
             {
-                Integer temp1 = *this;
+                Number temp1 = *this;
                 temp1.changeSign();
                 temp1 = temp1.add(number);
                 temp1.changeSign();
@@ -190,8 +190,8 @@ Integer Integer::operator-(const Integer &number)
             }
             else
             {
-                Integer temp1 = *this;
-                Integer temp2 = number;
+                Number temp1 = *this;
+                Number temp2 = number;
                 temp1.changeSign();
                 temp2.changeSign();
                 temp1 = temp1.subtract(temp2);
@@ -203,8 +203,8 @@ Integer Integer::operator-(const Integer &number)
         {
             if (number.isPositive)
             {
-                Integer temp1 = *this;
-                Integer temp2 = number;
+                Number temp1 = *this;
+                Number temp2 = number;
                 temp1.changeSign();
                 temp1 = temp2.add(temp1);
                 temp1.changeSign();
@@ -212,8 +212,8 @@ Integer Integer::operator-(const Integer &number)
             }
             else
             {
-                Integer temp1 = *this;
-                Integer temp2 = number;
+                Number temp1 = *this;
+                Number temp2 = number;
                 temp1.changeSign();
                 temp2.changeSign();
                 temp1 = temp2.subtract(temp1);
@@ -223,7 +223,7 @@ Integer Integer::operator-(const Integer &number)
     }
 }
 
-Integer Integer::operator+(const Integer &number)
+Number Number::operator+(const Number &number)
 {
     if (this->isPositive)
     {
@@ -233,7 +233,7 @@ Integer Integer::operator+(const Integer &number)
                 return this->add(number);
             else
             {
-                Integer temp = number;
+                Number temp = number;
                 temp.changeSign();
                 return this->subtract(temp);
             }
@@ -244,8 +244,8 @@ Integer Integer::operator+(const Integer &number)
                 return number.add(*this);
             else
             {
-                Integer temp1 = *this;
-                Integer temp2 = number;
+                Number temp1 = *this;
+                Number temp2 = number;
                 temp2.changeSign();
                 temp1 = temp2.subtract(temp1);
                 temp1.changeSign();
@@ -259,7 +259,7 @@ Integer Integer::operator+(const Integer &number)
         {
             if (number.isPositive)
             {
-                Integer temp = *this;
+                Number temp = *this;
                 temp.changeSign();
                 temp = temp.subtract(number);
                 temp.changeSign();
@@ -267,8 +267,8 @@ Integer Integer::operator+(const Integer &number)
             }
             else
             {
-                Integer temp1 = *this;
-                Integer temp2 = number;
+                Number temp1 = *this;
+                Number temp2 = number;
                 temp1.changeSign();
                 temp2.changeSign();
                 temp1 = temp1.add(temp2);
@@ -280,16 +280,16 @@ Integer Integer::operator+(const Integer &number)
         {
             if (number.isPositive)
             {
-                Integer temp1 = *this;
-                Integer temp2 = number;
+                Number temp1 = *this;
+                Number temp2 = number;
                 temp1.changeSign();
                 temp1 = temp2.subtract(temp1);
                 return temp1;
             }
             else
             {
-                Integer temp1 = *this;
-                Integer temp2 = number;
+                Number temp1 = *this;
+                Number temp2 = number;
                 temp1.changeSign();
                 temp2.changeSign();
                 temp1 = temp2.add(temp1);
@@ -300,16 +300,16 @@ Integer Integer::operator+(const Integer &number)
     }
 }
 
-Integer Integer::operator/(const Integer &number)
+Number Number::operator/(const Number &number)
 {
     int x[] = {0, 1, 2};
 
-    Integer zero(x, 1, true);
-    Integer ten(x, 2, true);
+    Number zero(x, 1, true);
+    Number ten(x, 2, true);
 
-    Integer dividend = *this;
-    Integer divisor = number;
-    Integer remainder = dividend;
+    Number dividend = *this;
+    Number divisor = number;
+    Number remainder = dividend;
 
     vector<int> temp_vector;
 
@@ -328,7 +328,7 @@ Integer Integer::operator/(const Integer &number)
         {
             d[OrSize - i - 1] = dividend.digits[beSize - 1 - i];
         }
-        Integer now(d, OrSize, true);
+        Number now(d, OrSize, true);
 
         while (remainder > divisor)
         {
@@ -353,9 +353,9 @@ Integer Integer::operator/(const Integer &number)
                 {
                     y[i] = dividend.digits[i];
                 }
-                Integer temp_rem(y, beSize - times - OrSize + 1, true);
-                Integer next(y + beSize - times - OrSize, 1, true);
-                Integer one(x + 1, 1, true);
+                Number temp_rem(y, beSize - times - OrSize + 1, true);
+                Number next(y + beSize - times - OrSize, 1, true);
+                Number one(x + 1, 1, true);
                 for (int i = 0; i < beSize - times - OrSize + 1; i++)
                 {
                     one = one * ten;
@@ -375,14 +375,14 @@ Integer Integer::operator/(const Integer &number)
         {
             ans[i] = temp_vector[temp_vector.size() - i - 1];
         }
-        return Integer(ans, temp_vector.size(), true);
+        return Number(ans, temp_vector.size(), true);
     }
 }
 
-Integer Integer::operator%(const Integer &number)
+Number Number::operator%(const Number &number)
 {
     int a[1] = {0};
-    Integer zero(a, 1, true);
+    Number zero(a, 1, true);
 
     if (this->operator==(number))
         return zero;
@@ -391,8 +391,8 @@ Integer Integer::operator%(const Integer &number)
     if (!this->operator>(number))
         return *this;
 
-    Integer temp = *this;
-    Integer temp2 = number;
+    Number temp = *this;
+    Number temp2 = number;
 
     bool aa = true;
     if (temp.isPositive)
@@ -420,7 +420,7 @@ Integer Integer::operator%(const Integer &number)
     return temp;
 }
 
-ostream &operator<<(ostream &strm, const Integer &num)
+ostream &operator<<(ostream &strm, const Number &num)
 {
     if (!num.isPositive)
         strm << "-";
@@ -431,7 +431,7 @@ ostream &operator<<(ostream &strm, const Integer &num)
     return strm;
 }
 
-istream &operator>>(istream &strm, Integer &num)
+istream &operator>>(istream &strm, Number &num)
 {
     string numberString;
     strm >> numberString;
@@ -476,14 +476,14 @@ istream &operator>>(istream &strm, Integer &num)
 
     int *a = &digitsVect[0];
 
-    Integer temp(a, digitsVect.size(), isPositive);
+    Number temp(a, digitsVect.size(), isPositive);
     num = temp;
 
     return strm;
 }
 
 // Helper functions
-Integer Integer::add(const Integer &number) const
+Number Number::add(const Number &number) const
 // This function adds two numbers
 // Precondition: both this and number are considered positive numbers
 // and this is biger than number
@@ -551,10 +551,10 @@ Integer Integer::add(const Integer &number) const
     for (int x = 0; x < digit_size - countZeros; x++)
         temp[x] = digit_temp[x];
 
-    return Integer(temp, digit_size - countZeros, true);
+    return Number(temp, digit_size - countZeros, true);
 }
 
-Integer Integer::subtract(const Integer &number)
+Number Number::subtract(const Number &number)
 // This function substract a number to itself (positive result)
 // Precondition: number is smaller than this, both numbers are considered positive
 // Postcondition: return the this - number (always positive)
@@ -611,16 +611,16 @@ Integer Integer::subtract(const Integer &number)
     for (int x = 0; x < this->size - countZeros; x++)
         temp[x] = dig_temp[x];
 
-    return Integer(temp, this->size - countZeros, true);
+    return Number(temp, this->size - countZeros, true);
 }
 
-Integer Integer::factorial()
+Number Number::factorial()
 {
     int x[] = {1, 0};
-    Integer temp = *this;
-    Integer times = *this;
-    Integer one(x, 1, true);
-    Integer zero(x + 1, 1, true);
+    Number temp = *this;
+    Number times = *this;
+    Number one(x, 1, true);
+    Number zero(x + 1, 1, true);
     times = times - one;
     while (times > zero)
     {
@@ -630,19 +630,19 @@ Integer Integer::factorial()
     return temp;
 }
 
-void Integer::changeSign()
+void Number::changeSign()
 // Changes the sign of the number
 {
     this->isPositive = !this->isPositive;
 }
 
-bool Integer::getSign()
+bool Number::getSign()
 // Getter function for isPositive
 {
     return this->isPositive;
 }
 
-bool Integer::isEqualZero()
+bool Number::isEqualZero()
 // Returns true if the number is zero, ignoring sign
 {
     if (this->size == 1)
@@ -653,7 +653,7 @@ bool Integer::isEqualZero()
     return false;
 }
 
-void Integer::insertFront(int d)
+void Number::insertFront(int d)
 // Inserts a digit at the end of the numer
 // (at the front of the vector digits)
 {
@@ -667,17 +667,17 @@ void Integer::insertFront(int d)
     this->digits = new_digits;
 }
 
-int Integer::getSize()
+int Number::getSize()
 {
     return this->digits.size();
 }
 
-Integer Integer::power(const Integer &times)
+Number Number::power(const Number &times)
 {
     int x[] = {1, 0, 2};
-    Integer one(x, 1, true);
-    Integer temp = one;
-    Integer add(x + 1, 1, true);
+    Number one(x, 1, true);
+    Number temp = one;
+    Number add(x + 1, 1, true);
     if (times == add)
     {
         temp = one;
@@ -686,13 +686,13 @@ Integer Integer::power(const Integer &times)
     // base is negative
     if (!this->isPositive)
     {
-        Integer two(x + 2, 1, true);
+        Number two(x + 2, 1, true);
         if (add > times) // negative times
         {
             temp = add;
             return temp;
         }
-        Integer positive = times;
+        Number positive = times;
         if (positive % two == add)
         {
             temp.isPositive = true;
@@ -726,7 +726,7 @@ Integer Integer::power(const Integer &times)
 
 // Friend functions
 
-Integer getGCD(const Integer &num1, const Integer &num2)
+Number getGCD(const Number &num1, const Number &num2)
 // Get the Greatest Common Divisor between two numbers
 // Precondition: num1 and num2 are different positive numbers
 {
@@ -734,20 +734,20 @@ Integer getGCD(const Integer &num1, const Integer &num2)
         cout << "Error: Can not get GCD of negative values!" << endl;
 
     int a[1] = {0};
-    Integer zero(a, 1, true);
+    Number zero(a, 1, true);
 
     if (num2 == zero)
         return num1;
 
-    Integer temp = num1;
+    Number temp = num1;
 
     return getGCD(num2, temp % num2);
 }
 
-Integer getLCM(const Integer &num1, const Integer &num2)
+Number getLCM(const Number &num1, const Number &num2)
 // Get the Least Common Multiple between two numbers
 // Precondition: num1 and num2 are different positive numbers
 {
-    Integer temp = num1;
+    Number temp = num1;
     return (temp / getGCD(num1, num2)) * num2;
 }

@@ -7,18 +7,18 @@ using namespace std;
 
 Decimal::Decimal()
 {
-    Integer zero;
+    Number zero;
     int a[1] = {1};
-    Integer one(a, 1, true);
+    Number one(a, 1, true);
 
     this->numerator = zero;
     this->denominator = one;
 }
 
-Decimal::Decimal(const Integer &num, const Integer &den)
+Decimal::Decimal(const Number &num, const Number &den)
 {
-    Integer temp_num = num;
-    Integer temp_den = den;
+    Number temp_num = num;
+    Number temp_den = den;
 
     this->isPositive = true;
     // The numerator's sign determines the Decimal's sign
@@ -45,40 +45,40 @@ Decimal::Decimal(const Integer &num, const Integer &den)
 
 Decimal Decimal::operator+(const Decimal &num)
 {
-    Integer lcm = this->denominator;
+    Number lcm = this->denominator;
 
     if (!(this->denominator == num.denominator))
         lcm = getLCM(this->denominator, num.denominator);
 
-    Integer temp1 = this->numerator;
-    Integer temp2 = num.numerator;
+    Number temp1 = this->numerator;
+    Number temp2 = num.numerator;
 
     if (!this->isPositive)
         temp1.changeSign();
     if (!num.isPositive)
         temp2.changeSign();
 
-    Integer temp_num = temp1 * (lcm / this->denominator) + temp2 * (lcm / num.denominator);
+    Number temp_num = temp1 * (lcm / this->denominator) + temp2 * (lcm / num.denominator);
 
     return Decimal(temp_num, lcm);
 }
 
 Decimal Decimal::operator-(const Decimal &num)
 {
-    Integer lcm = this->denominator;
+    Number lcm = this->denominator;
 
     if (!(this->denominator == num.denominator))
         lcm = getLCM(this->denominator, num.denominator);
 
-    Integer temp1 = this->numerator;
-    Integer temp2 = num.numerator;
+    Number temp1 = this->numerator;
+    Number temp2 = num.numerator;
 
     if (!this->isPositive)
         temp1.changeSign();
     if (!num.isPositive)
         temp2.changeSign();
 
-    Integer temp_num = temp1 * (lcm / this->denominator) - temp2 * (lcm / num.denominator);
+    Number temp_num = temp1 * (lcm / this->denominator) - temp2 * (lcm / num.denominator);
 
     return Decimal(temp_num, lcm);
 }
@@ -96,8 +96,8 @@ void Decimal::printFraction()
 
 bool Decimal::isInteger()
 {
-    Integer zero;
-    Integer reminder = this->numerator % this->denominator;
+    Number zero;
+    Number reminder = this->numerator % this->denominator;
     if (reminder == zero)
         return true;
     return false;
@@ -105,8 +105,8 @@ bool Decimal::isInteger()
 
 void Decimal::divideSelf()
 {
-    Integer temp1 = this->numerator;
-    Integer temp2 = this->denominator;
+    Number temp1 = this->numerator;
+    Number temp2 = this->denominator;
 
     // Change all numbers to positive
     bool aa = true;
@@ -127,21 +127,21 @@ void Decimal::divideSelf()
             temp2.changeSign();
     }
 
-    Integer quotient = temp1 / temp2;
-    Integer reminder = temp1 % temp2;
+    Number quotient = temp1 / temp2;
+    Number reminder = temp1 % temp2;
 
     int ten_dig[2] = {0, 1};
     int one_dig[1] = {1};
-    Integer ten(ten_dig, 2, true);
-    Integer one(one_dig, 1, true);
-    Integer zero;
+    Number ten(ten_dig, 2, true);
+    Number one(one_dig, 1, true);
+    Number zero;
     int ten_times = 0;
 
     while (!(reminder == zero))
     {
         ten_times++;
         reminder = reminder * ten;
-        Integer quot_temp = reminder / temp2;
+        Number quot_temp = reminder / temp2;
         // In this step, we assume that quotient is always one digit
         quotient.insertFront(quot_temp[0]);
         reminder = reminder % temp2;
@@ -151,7 +151,7 @@ void Decimal::divideSelf()
             break;
     }
 
-    Integer one_temp(one_dig, 1, true);
+    Number one_temp(one_dig, 1, true);
     for (int i = 0; i < ten_times; i++)
         one_temp = one_temp * ten;
 
@@ -197,8 +197,8 @@ istream &operator>>(istream &strm, Decimal &num)
 {
     int a[1] = {1};
     int b[2] = {0, 1};
-    Integer one(a, 1, true);
-    Integer ten(b, 2, true);
+    Number one(a, 1, true);
+    Number ten(b, 2, true);
 
     string numberString;
     strm >> numberString;
@@ -265,7 +265,7 @@ istream &operator>>(istream &strm, Decimal &num)
         numDigits.push_back(0);
 
     int *c = &numDigits[0];
-    Integer numerator(c, numDigits.size(), isPositive);
+    Number numerator(c, numDigits.size(), isPositive);
 
     // Simplify zeros
     if (decimalActivated)

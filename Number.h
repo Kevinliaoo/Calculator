@@ -3,13 +3,6 @@
 
 using namespace std;
 
-class Number
-{
-private:
-public:
-    Number(){};
-};
-
 class Integer
 {
 private:
@@ -54,7 +47,8 @@ private:
     // Both numerator and denominator are stored as positive numbers
     Integer numerator;
     Integer denominator;
-    bool isPositive; // The numerator's sign determines the Decimal's sign
+    bool isPositive;   // The numerator's sign determines the Decimal's sign
+    void divideSelf(); // Copy function of decimalDivision
 
 public:
     Decimal();

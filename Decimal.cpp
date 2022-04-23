@@ -96,17 +96,77 @@ void Decimal::printFraction()
 
 bool Decimal::isInteger()
 {
-    int a[1] = {0};
-    Integer zero(a, 1, true);
+    Integer zero;
     Integer reminder = this->numerator % this->denominator;
     if (reminder == zero)
         return true;
     return false;
 }
 
+void Decimal::divideSelf()
+{
+    Integer temp1 = this->numerator;
+    Integer temp2 = this->denominator;
+
+    // Change all numbers to positive
+    bool aa = true;
+    if (temp1.getSign())
+    {
+        if (!temp2.getSign())
+        {
+            temp2.changeSign();
+            aa = false;
+        }
+    }
+    else
+    {
+        temp1.changeSign();
+        if (temp2.getSign())
+            aa = false;
+        else
+            temp2.changeSign();
+    }
+
+    Integer quotient = temp1 / temp2;
+    Integer reminder = temp1 % temp2;
+
+    int ten_dig[2] = {0, 1};
+    int one_dig[1] = {1};
+    Integer ten(ten_dig, 2, true);
+    Integer one(one_dig, 1, true);
+    Integer zero;
+    int ten_times = 0;
+
+    while (!(reminder == zero))
+    {
+        ten_times++;
+        reminder = reminder * ten;
+        Integer quot_temp = reminder / temp2;
+        // In this step, we assume that quotient is always one digit
+        quotient.insertFront(quot_temp[0]);
+        reminder = reminder % temp2;
+
+        // 100 decimal digits of precision
+        if (ten_times == 100)
+            break;
+    }
+
+    Integer one_temp(one_dig, 1, true);
+    for (int i = 0; i < ten_times; i++)
+        one_temp = one_temp * ten;
+
+    if (!aa)
+        quotient.changeSign();
+
+    this->numerator = quotient;
+    this->denominator = one_temp;
+}
+
 ostream &operator<<(ostream &strm, const Decimal &num)
 {
     Decimal temp = num;
+
+    temp.divideSelf();
 
     if (!temp.isPositive)
         strm << "-";
@@ -207,12 +267,16 @@ istream &operator>>(istream &strm, Decimal &num)
     int *c = &numDigits[0];
     Integer numerator(c, numDigits.size(), isPositive);
 
-    for (int i = numerator.getSize() - 1; i >= 0; i--)
+    // Simplify zeros
+    if (decimalActivated)
     {
-        if (numerator[i] != 0)
-            break;
-        numerator = numerator / ten;
-        one = one / ten;
+        for (int i = numerator.getSize() - 1; i >= 0; i--)
+        {
+            if (numerator[i] != 0)
+                break;
+            numerator = numerator / ten;
+            one = one / ten;
+        }
     }
 
     Decimal temp(numerator, one);

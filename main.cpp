@@ -1,21 +1,82 @@
 #include <iostream>
 #include <vector>
+#include <map>
+#include <string>
+#include <sstream>
 #include "Number.h"
 
 using namespace std;
 
 Decimal decimalDivision(const Integer &num1, const Integer num2);
+void printVariables(map<string, Decimal> &vars);
+Decimal makeCalculation(stringstream &ss);
 
 int main()
 {
-    Decimal dec_1;
-    cout << dec_1;
-    cin >> dec_1;
-    cout << dec_1;
+    /*
+    map<string, Number> variables;
+    stringstream ss;
+
+    Integer i1;
+    string aa = "-1234";
+    ss.str(aa);
+
+    cout << i1;
+    ss >> i1;
+    cout << i1;*/
+
+    Integer i1, i2;
+    cin >> i1 >> i2;
+    cout << i1 * i2;
+
+    /*
+        map<string, Decimal> variables;
+
+        string inputMessage;
+        stringstream ss;
+
+        while (getline(cin, inputMessage))
+        {
+            ss.str(inputMessage);
+
+            if (inputMessage.substr(0, 3) == "SET")
+            // Set a variable
+            {
+                string datatype, varName, eqSign, value;
+                ss >> eqSign >> datatype >> varName >> eqSign;
+
+                if (datatype != "Integer" && datatype != "Decimal")
+                {
+                    cout << "Error: Invalid datatype";
+                    continue;
+                }
+                variables.insert(pair<string, Decimal>(varName, makeCalculation(ss)));
+            }
+
+            ss.clear();
+        }
+
+        printVariables(variables);
+        */
+}
+
+Decimal makeCalculation(stringstream &ss)
+{
+    Decimal temp;
+    ss >> temp;
+    return temp;
+}
+
+void printVariables(map<string, Decimal> &vars)
+{
+    map<string, Decimal>::iterator itr;
+    for (itr = vars.begin(); itr != vars.end(); itr++)
+        cout << itr->first << ": " << itr->second << endl;
 }
 
 Decimal decimalDivision(const Integer &num1, const Integer num2)
 // Decimal division. Converts denominator in a number power of 10
+// Divides two Integers and returns a Decimal
 {
     Integer temp1 = num1;
     Integer temp2 = num2;

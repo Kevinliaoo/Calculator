@@ -450,6 +450,10 @@ istream &operator>>(istream &strm, Integer &num)
         digitsVect.pop_back();
     }
 
+    // Inserted a zero
+    if (digitsVect.size() == 0)
+        digitsVect.push_back(0);
+
     int *a = &digitsVect[0];
 
     Integer temp(a, digitsVect.size(), isPositive);

@@ -3,6 +3,13 @@
 
 using namespace std;
 
+class Number
+{
+private:
+public:
+    Number(){};
+};
+
 class Integer
 {
 private:
@@ -50,10 +57,13 @@ private:
     bool isPositive; // The numerator's sign determines the Decimal's sign
 
 public:
+    Decimal();
     Decimal(const Integer &num, const Integer &den);
 
     Decimal operator+(const Decimal &num);
     Decimal operator-(const Decimal &num);
+    Decimal &operator=(const Decimal &num);
+    bool operator==(const Decimal &num) const;
 
     void printFraction();
     bool isInteger();

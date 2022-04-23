@@ -8,24 +8,10 @@ Decimal decimalDivision(const Integer &num1, const Integer num2);
 
 int main()
 {
-    int a_num[3] = {2, 8, 1};
-    int b_num[1] = {8};
-    int c_num[1] = {3};
-    int z_num[1] = {0};
-
-    Integer a(a_num, 3, true);
-    Integer b(b_num, 1, true);
-    Integer c(c_num, 1, true);
-    Integer d(a_num, 1, false);
-
-    Decimal deca(a, b);
-    Decimal decb(a, c);
-
-    Decimal t = decimalDivision(a, b);
-
-    cout << t;
-    cin >> t;
-    cout << t;
+    Decimal dec_1;
+    cout << dec_1;
+    cin >> dec_1;
+    cout << dec_1;
 }
 
 Decimal decimalDivision(const Integer &num1, const Integer num2)

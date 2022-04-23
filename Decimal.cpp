@@ -4,6 +4,17 @@
 using namespace std;
 
 /* ********** DECIMAL ********** */
+
+Decimal::Decimal()
+{
+    Integer zero;
+    int a[1] = {1};
+    Integer one(a, 1, true);
+
+    this->numerator = zero;
+    this->denominator = one;
+}
+
 Decimal::Decimal(const Integer &num, const Integer &den)
 {
     Integer temp_num = num;
@@ -103,7 +114,13 @@ ostream &operator<<(ostream &strm, const Decimal &num)
     int noZeroPositions = temp.numerator.getSize() - temp.denominator.getSize() + 1;
 
     if (noZeroPositions == 0)
-        cout << "0";
+        strm << "0";
+    else if (noZeroPositions < 0)
+    {
+        strm << "0.";
+        for (int i = 0; i < -noZeroPositions; i++)
+            strm << "0";
+    }
 
     for (int i = 0; i < temp.numerator.getSize(); i++)
     {
@@ -171,6 +188,9 @@ istream &operator>>(istream &strm, Decimal &num)
     }
 
     decimalPlaces = numDigits.size() - decimalPlaces;
+    if (!decimalActivated)
+        decimalPlaces = 0;
+
     for (int i = 0; i < decimalPlaces; i++)
         one = one * ten;
 
@@ -181,11 +201,36 @@ istream &operator>>(istream &strm, Decimal &num)
         numDigits.pop_back();
     }
 
+    if (numDigits.size() == 0)
+        numDigits.push_back(0);
+
     int *c = &numDigits[0];
     Integer numerator(c, numDigits.size(), isPositive);
+
+    for (int i = numerator.getSize() - 1; i >= 0; i--)
+    {
+        if (numerator[i] != 0)
+            break;
+        numerator = numerator / ten;
+        one = one / ten;
+    }
 
     Decimal temp(numerator, one);
     num = temp;
 
     return strm;
+}
+
+bool Decimal::operator==(const Decimal &num) const
+{
+    return (this->isPositive == num.isPositive && this->numerator == num.numerator && this->denominator == num.denominator);
+}
+
+Decimal &Decimal::operator=(const Decimal &num)
+{
+    this->isPositive = num.isPositive;
+    this->numerator = num.numerator;
+    this->denominator = num.denominator;
+
+    return *this;
 }

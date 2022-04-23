@@ -29,7 +29,6 @@ public:
 
     Integer factorial();
     Integer power(const Integer &times);
-    void printNumber() const;
     void changeSign();
     bool getSign();
     bool isEqualZero();
@@ -38,6 +37,8 @@ public:
 
     friend Integer getGCD(const Integer &num1, const Integer &num2);
     friend Integer getLCM(const Integer &num1, const Integer &num2);
+    friend ostream &operator<<(ostream &strm, const Integer &num);
+    friend istream &operator>>(istream &strm, Integer &num);
 };
 
 class Decimal
@@ -55,6 +56,8 @@ public:
     Decimal operator-(const Decimal &num);
 
     void printFraction();
-    void printDecimal();
     bool isInteger();
+
+    friend ostream &operator<<(ostream &strm, const Decimal &num);
+    friend istream &operator>>(istream &strm, Decimal &num);
 };

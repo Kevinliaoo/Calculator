@@ -400,6 +400,64 @@ Integer Integer::operator%(const Integer &number)
     return temp;
 }
 
+ostream &operator<<(ostream &strm, const Integer &num)
+{
+    if (!num.isPositive)
+        strm << "-";
+    for (int i = 0; i < num.size; i++)
+        strm << num.digits[num.size - 1 - i];
+    strm << endl;
+
+    return strm;
+}
+
+istream &operator>>(istream &strm, Integer &num)
+{
+    string numberString;
+    strm >> numberString;
+    int size = numberString.size();
+    bool isPositive = true;
+    vector<int> digitsVect;
+
+    for (int i = size - 1; i >= 0; i--)
+    {
+        char currentDigit = numberString[i];
+        if (i == 0)
+        // Check if the number is negative
+        {
+            if (currentDigit == '-')
+            {
+                isPositive = false;
+                continue;
+            }
+        }
+
+        int intDigit = currentDigit - '0';
+        if (intDigit < 0 || intDigit > 9)
+        {
+            cout << "Error: Invalid input\n";
+            return strm;
+        }
+
+        digitsVect.push_back(intDigit);
+    }
+
+    // Delete the useless zeros at the front
+    for (int i = digitsVect.size() - 1; i >= 0; i--)
+    {
+        if (digitsVect[i] != 0)
+            break;
+        digitsVect.pop_back();
+    }
+
+    int *a = &digitsVect[0];
+
+    Integer temp(a, digitsVect.size(), isPositive);
+    num = temp;
+
+    return strm;
+}
+
 // Helper functions
 Integer Integer::add(const Integer &number) const
 // This function adds two numbers
@@ -558,16 +616,6 @@ bool Integer::getSign()
 // Getter function for isPositive
 {
     return this->isPositive;
-}
-
-void Integer::printNumber() const
-// Display the number
-{
-    if (!this->isPositive)
-        cout << "-";
-    for (int i = 0; i < this->size; i++)
-        cout << this->digits[this->size - 1 - i];
-    cout << endl;
 }
 
 bool Integer::isEqualZero()

@@ -22,7 +22,10 @@ int main()
     Decimal decb(a, c);
 
     Decimal t = decimalDivision(a, b);
-    t.printDecimal();
+
+    cout << t;
+    cin >> t;
+    cout << t;
 }
 
 Decimal decimalDivision(const Integer &num1, const Integer num2)

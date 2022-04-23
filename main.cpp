@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Decimal decimalDivision(const Number &num1, const Number num2);
+Decimal decimalDivision(const Integer &num1, const Integer num2);
 
 int main()
 {
@@ -13,10 +13,10 @@ int main()
     int c_num[1] = {3};
     int z_num[1] = {0};
 
-    Number a(a_num, 3, true);
-    Number b(b_num, 1, true);
-    Number c(c_num, 1, true);
-    Number d(a_num, 1, false);
+    Integer a(a_num, 3, true);
+    Integer b(b_num, 1, true);
+    Integer c(c_num, 1, true);
+    Integer d(a_num, 1, false);
 
     Decimal deca(a, b);
     Decimal decb(a, c);
@@ -25,11 +25,11 @@ int main()
     t.printDecimal();
 }
 
-Decimal decimalDivision(const Number &num1, const Number num2)
+Decimal decimalDivision(const Integer &num1, const Integer num2)
 // Decimal division. Converts denominator in a number power of 10
 {
-    Number temp1 = num1;
-    Number temp2 = num2;
+    Integer temp1 = num1;
+    Integer temp2 = num2;
 
     // Change all numbers to positive
     bool aa = true;
@@ -50,21 +50,21 @@ Decimal decimalDivision(const Number &num1, const Number num2)
             temp2.changeSign();
     }
 
-    Number quotient = temp1 / temp2;
-    Number reminder = temp1 % temp2;
+    Integer quotient = temp1 / temp2;
+    Integer reminder = temp1 % temp2;
 
     int ten_dig[2] = {0, 1};
     int one_dig[1] = {1};
-    Number ten(ten_dig, 2, true);
-    Number one(one_dig, 1, true);
-    Number zero;
+    Integer ten(ten_dig, 2, true);
+    Integer one(one_dig, 1, true);
+    Integer zero;
     int ten_times = 0;
 
     while (!(reminder == zero))
     {
         ten_times++;
         reminder = reminder * ten;
-        Number quot_temp = reminder / temp2;
+        Integer quot_temp = reminder / temp2;
         // In this step, we assume that quotient is always one digit
         quotient.insertFront(quot_temp[0]);
         reminder = reminder % temp2;
@@ -74,7 +74,7 @@ Decimal decimalDivision(const Number &num1, const Number num2)
             break;
     }
 
-    Number one_temp(one_dig, 1, true);
+    Integer one_temp(one_dig, 1, true);
     for (int i = 0; i < ten_times; i++)
         one_temp = one_temp * ten;
 

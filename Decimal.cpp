@@ -4,10 +4,10 @@
 using namespace std;
 
 /* ********** DECIMAL ********** */
-Decimal::Decimal(const Number &num, const Number &den)
+Decimal::Decimal(const Integer &num, const Integer &den)
 {
-    Number temp_num = num;
-    Number temp_den = den;
+    Integer temp_num = num;
+    Integer temp_den = den;
 
     this->isPositive = true;
     // The numerator's sign determines the Decimal's sign
@@ -34,13 +34,13 @@ Decimal::Decimal(const Number &num, const Number &den)
 
 Decimal Decimal::operator+(const Decimal &num)
 {
-    Number lcm = this->denominator;
+    Integer lcm = this->denominator;
 
     if (!(this->denominator == num.denominator))
         lcm = getLCM(this->denominator, num.denominator);
 
-    Number temp1 = this->numerator;
-    Number temp2 = num.numerator;
+    Integer temp1 = this->numerator;
+    Integer temp2 = num.numerator;
 
     temp2.printNumber();
     cout << temp2.getSign() << endl;
@@ -50,27 +50,27 @@ Decimal Decimal::operator+(const Decimal &num)
     if (!num.isPositive)
         temp2.changeSign();
 
-    Number temp_num = temp1 * (lcm / this->denominator) + temp2 * (lcm / num.denominator);
+    Integer temp_num = temp1 * (lcm / this->denominator) + temp2 * (lcm / num.denominator);
 
     return Decimal(temp_num, lcm);
 }
 
 Decimal Decimal::operator-(const Decimal &num)
 {
-    Number lcm = this->denominator;
+    Integer lcm = this->denominator;
 
     if (!(this->denominator == num.denominator))
         lcm = getLCM(this->denominator, num.denominator);
 
-    Number temp1 = this->numerator;
-    Number temp2 = num.numerator;
+    Integer temp1 = this->numerator;
+    Integer temp2 = num.numerator;
 
     if (!this->isPositive)
         temp1.changeSign();
     if (!num.isPositive)
         temp2.changeSign();
 
-    Number temp_num = temp1 * (lcm / this->denominator) - temp2 * (lcm / num.denominator);
+    Integer temp_num = temp1 * (lcm / this->denominator) - temp2 * (lcm / num.denominator);
 
     return Decimal(temp_num, lcm);
 }
@@ -105,8 +105,8 @@ void Decimal::printDecimal()
 bool Decimal::isInteger()
 {
     int a[1] = {0};
-    Number zero(a, 1, true);
-    Number reminder = this->numerator % this->denominator;
+    Integer zero(a, 1, true);
+    Integer reminder = this->numerator % this->denominator;
     if (reminder == zero)
         return true;
     return false;

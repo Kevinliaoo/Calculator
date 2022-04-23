@@ -27,7 +27,8 @@ int main()
 
     Integer i1, i2;
     cin >> i1 >> i2;
-    cout << i1 * i2;
+    cout << i1;
+    cout << i2;
 
     /*
         map<string, Decimal> variables;

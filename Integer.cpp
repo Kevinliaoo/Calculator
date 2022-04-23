@@ -302,61 +302,81 @@ Integer Integer::operator+(const Integer &number)
 
 Integer Integer::operator/(const Integer &number)
 {
+    int x[] = {0, 1, 2};
 
-    int a[1] = {0};
-    Integer zero(a, 1, true);
-    int b[1] = {1};
-    Integer one(b, 1, true);
+    Integer zero(x, 1, true);
+    Integer ten(x, 2, true);
 
-    if (number == zero)
-    {
-        cout << "Error: Can not divide by zero!" << endl;
+    Integer dividend = *this;
+    Integer divisor = number;
+    Integer remainder = dividend;
+
+    vector<int> temp_vector;
+
+    if (divisor.digits.size() > dividend.digits.size())
         return zero;
-    }
 
-    if (this->operator==(number))
-        return one;
-
-    Integer temp = *this;
-    Integer temp2 = number;
-
-    bool aa = true;
-    if (temp.isPositive)
-    {
-        if (!temp2.isPositive)
-        {
-            temp2.changeSign();
-            aa = false;
-        }
-    }
     else
     {
-        temp.changeSign();
-        if (number.isPositive)
-            aa = false;
-        else
-            temp2.changeSign();
+        int times = 0;
+        int *d = new int[divisor.digits.size()];
+        int beSize = dividend.digits.size();
+        int OrSize = divisor.digits.size();
+        int temp;
+
+        for (int i = 0; i < divisor.digits.size(); i++)
+        {
+            d[OrSize - i - 1] = dividend.digits[beSize - 1 - i];
+        }
+        Integer now(d, OrSize, true);
+
+        while (remainder > divisor)
+        {
+            temp = 0;
+            while (now > divisor)
+            {
+                now = now - divisor;
+                temp++;
+            }
+
+            if (now == divisor)
+            {
+                now = zero;
+                temp += 1;
+            }
+
+            times++;
+            if (beSize - times - OrSize + 1 > 0)
+            {
+                int *y = new int[beSize - times - OrSize + 1];
+                for (int i = 0; i <= beSize - times - OrSize; i++)
+                {
+                    y[i] = dividend.digits[i];
+                }
+                Integer temp_rem(y, beSize - times - OrSize + 1, true);
+                Integer next(y + beSize - times - OrSize, 1, true);
+                Integer one(x + 1, 1, true);
+                for (int i = 0; i < beSize - times - OrSize + 1; i++)
+                {
+                    one = one * ten;
+                }
+                now = now * ten + next;
+                remainder = now * one + temp_rem;
+            }
+            else
+                remainder = now;
+            if (temp_vector.size() != 0 || temp != 0)
+                temp_vector.push_back(temp);
+        }
+
+        delete[] d;
+        int *ans = new int[temp_vector.size()];
+        for (int i = 0; i < temp_vector.size(); i++)
+        {
+            ans[i] = temp_vector[temp_vector.size() - i - 1];
+        }
+        return Integer(ans, temp_vector.size(), true);
     }
-
-    if (temp == temp2)
-        return Integer(b, 1, aa);
-    // number is greater than this, so I return zero
-    if (!(temp > temp2))
-        return zero;
-
-    while (temp > temp2)
-    {
-        zero = zero + one;
-        temp = temp - temp2;
-    }
-
-    if (temp == temp2)
-        zero = zero + one;
-
-    if (!aa)
-        zero.changeSign();
-
-    return zero;
 }
 
 Integer Integer::operator%(const Integer &number)

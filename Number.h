@@ -6,53 +6,60 @@ using namespace std;
 class Number
 {
 private:
+public:
+    Number(){};
+};
+
+class Integer : public Number
+{
+private:
     vector<int> digits; // Stores all the digits of the number
     bool isPositive;    // true if it is a positive number
     int size;           // The size of the number
 
-    Number subtract(const Number &number);  // Helper function for operator-
-    Number add(const Number &number) const; // Helper function for operator+
+    Integer subtract(const Integer &number);  // Helper function for operator-
+    Integer add(const Integer &number) const; // Helper function for operator+
 
 public:
-    Number();
-    Number(int *a, int size, bool isPositive);
+    Integer();
+    Integer(int *a, int size, bool isPositive);
 
-    Number &operator=(const Number &number);
-    Number operator*(const Number &number);
-    Number operator-(const Number &number);
-    Number operator+(const Number &number);
-    Number operator%(const Number &number);
-    Number operator/(const Number &number);
-    bool operator>(const Number &number) const;
-    bool operator==(const Number &number) const;
+    Integer &operator=(const Integer &number);
+    Integer operator*(const Integer &number);
+    Integer operator-(const Integer &number);
+    Integer operator+(const Integer &number);
+    Integer operator%(const Integer &number);
+    Integer operator/(const Integer &number);
+    bool operator>(const Integer &number) const;
+    bool operator==(const Integer &number) const;
     int operator[](int index) const;
 
-    Number factorial();
-    Number power(const Number &times);
+    Integer factorial();
+    Integer power(const Integer &times);
     void changeSign();
     bool getSign();
     bool isEqualZero();
     void insertFront(int d);
     int getSize();
 
-    friend Number getGCD(const Number &num1, const Number &num2);
-    friend Number getLCM(const Number &num1, const Number &num2);
-    friend ostream &operator<<(ostream &strm, const Number &num);
-    friend istream &operator>>(istream &strm, Number &num);
+    friend Integer getGCD(const Integer &num1, const Integer &num2);
+    friend Integer getLCM(const Integer &num1, const Integer &num2);
+    friend ostream &operator<<(ostream &strm, const Integer &num);
+    friend istream &operator>>(istream &strm, Integer &num);
 };
 
-class Decimal
+class Decimal : public Number
 {
 private:
     // Both numerator and denominator are stored as positive numbers
-    Number numerator;
-    Number denominator;
+    Integer numerator;
+    Integer denominator;
     bool isPositive;   // The numerator's sign determines the Decimal's sign
     void divideSelf(); // Copy function of decimalDivision
 
 public:
     Decimal();
-    Decimal(const Number &num, const Number &den);
+    Decimal(const Integer &num, const Integer &den);
 
     Decimal operator+(const Decimal &num);
     Decimal operator-(const Decimal &num);

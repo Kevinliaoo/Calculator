@@ -30,8 +30,8 @@ public:
     Number factorial();
     Number power(const Number &times);
     void changeSign();
-    bool getSign();
-    bool isEqualZero();
+    bool getSign() const;
+    bool isEqualZero() const;
     void insertFront(int d);
     int getSize();
 
@@ -65,6 +65,8 @@ public:
 
     friend ostream &operator<<(ostream &strm, const Decimal &num);
     friend istream &operator>>(istream &strm, Decimal &num);
+
+    Decimal power(const Decimal &times);
 };
 
 class Integer : public Decimal

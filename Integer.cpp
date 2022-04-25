@@ -11,7 +11,7 @@ Integer::Integer() : Decimal()
 
 Integer::Integer(const Number &num) : Decimal()
 {
-    this->isPositive = true;
+    this->isPositive = num.getSign();
     this->numerator = num;
     int a[1] = {1};
     Number one(a, 1, true);
@@ -39,7 +39,8 @@ Integer Integer::operator*(const Integer &integer)
 Integer Integer::operator/(const Integer &integer)
 {
     Number newNum = this->numerator / integer.numerator;
-    return Integer(newNum);
+    Integer res(newNum);
+    return res;
 }
 
 Integer &Integer::operator=(const Integer &integer)

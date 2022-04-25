@@ -299,3 +299,319 @@ Decimal &Decimal::operator=(const Decimal &num)
 
     return *this;
 }
+
+Decimal Decimal::power(const Decimal &times)
+{
+    int x[] = {0, 1, 2};
+    Number zero_num(x, 1, true);
+    Number one_num(x + 1, 1, true);
+    Number two_num(x + 2, 1, true);
+    Number NumTimes = times.numerator;
+    Number product = one_num;
+    Number DecTimes = times.denominator;
+
+    Decimal zero(zero_num, zero_num);
+    Decimal one(one_num, one_num);
+    Decimal two(two_num, one_num);
+    Decimal temp = one;
+    Decimal compare = times;
+
+    if (times.denominator == zero_num || times.numerator == zero_num)
+    {
+        temp = one;
+        return temp;
+    }
+    if (!times.isPositive)
+    {
+        if (!this->isPositive)
+        {
+            if (compare.numerator % two_num == zero_num)
+            {
+                while (1)
+                {
+                    temp.denominator = temp.denominator * this->numerator;
+                    temp.numerator = temp.numerator * this->denominator;
+                    NumTimes = NumTimes - one_num;
+                    if (NumTimes == zero_num)
+                        break;
+                }
+                while (1)
+                {
+                    NumTimes = NumTimes + one_num;
+                    DecTimes = times.denominator;
+                    product = one_num;
+                    while (1)
+                    {
+                        product = product * NumTimes;
+                        DecTimes = DecTimes - one_num;
+                        if (DecTimes == zero_num)
+                            break;
+                    }
+                    if (temp.numerator == product)
+                    {
+                        temp.numerator = NumTimes;
+                        break;
+                    }
+                }
+                NumTimes = zero_num;
+                while (1)
+                {
+                    NumTimes = NumTimes + one_num;
+                    DecTimes = times.denominator;
+                    product = one_num;
+                    while (1)
+                    {
+                        product = product * NumTimes;
+                        DecTimes = DecTimes - one_num;
+                        if (DecTimes == zero_num)
+                            break;
+                    }
+                    if (temp.denominator == product)
+                    {
+                        temp.denominator = NumTimes;
+                        break;
+                    }
+                }
+                return temp;
+            }
+            temp.isPositive = false;
+            while (1)
+            {
+                temp.denominator = temp.denominator * this->numerator;
+                temp.numerator = temp.numerator * this->denominator;
+                NumTimes = NumTimes - one_num;
+                if (NumTimes == zero_num)
+                    break;
+            }
+            while (1)
+            {
+                NumTimes = NumTimes + one_num;
+                DecTimes = times.denominator;
+                product = one_num;
+                while (1)
+                {
+                    product = product * NumTimes;
+                    DecTimes = DecTimes - one_num;
+                    if (DecTimes == zero_num)
+                        break;
+                }
+                if (temp.numerator == product)
+                {
+                    temp.numerator = NumTimes;
+                    break;
+                }
+            }
+            NumTimes = zero_num;
+            while (1)
+            {
+                NumTimes = NumTimes + one_num;
+                DecTimes = times.denominator;
+                product = one_num;
+                while (1)
+                {
+                    product = product * NumTimes;
+                    DecTimes = DecTimes - one_num;
+                    if (DecTimes == zero_num)
+                        break;
+                }
+                if (temp.denominator == product)
+                {
+                    temp.denominator = NumTimes;
+                    break;
+                }
+            }
+            return temp;
+        }
+        while (1)
+        {
+            temp.denominator = temp.denominator * this->numerator;
+            temp.numerator = temp.numerator * this->denominator;
+            NumTimes = NumTimes - one_num;
+            if (NumTimes == zero_num)
+                break;
+        }
+        while (1)
+        {
+            NumTimes = NumTimes + one_num;
+            DecTimes = times.denominator;
+            product = one_num;
+            while (1)
+            {
+                product = product * NumTimes;
+                DecTimes = DecTimes - one_num;
+                if (DecTimes == zero_num)
+                    break;
+            }
+            if (temp.numerator == product)
+            {
+                temp.numerator = NumTimes;
+                break;
+            }
+        }
+        NumTimes = zero_num;
+        while (1)
+        {
+            NumTimes = NumTimes + one_num;
+            DecTimes = times.denominator;
+            product = one_num;
+            while (1)
+            {
+                product = product * NumTimes;
+                DecTimes = DecTimes - one_num;
+                if (DecTimes == zero_num)
+                    break;
+            }
+            if (temp.denominator == product)
+            {
+                temp.denominator = NumTimes;
+                break;
+            }
+        }
+        return temp;
+    }
+    if (!this->isPositive)
+    {
+        if (compare.numerator % two_num == zero_num)
+        {
+            while (1)
+            {
+                temp.denominator = temp.denominator * this->denominator;
+                temp.numerator = temp.numerator * this->numerator;
+                NumTimes = NumTimes - one_num;
+                if (NumTimes == zero_num)
+                    break;
+            }
+            while (1)
+            {
+                NumTimes = NumTimes + one_num;
+                DecTimes = times.denominator;
+                product = one_num;
+                while (1)
+                {
+                    product = product * NumTimes;
+                    DecTimes = DecTimes - one_num;
+                    if (DecTimes == zero_num)
+                        break;
+                }
+                if (temp.numerator == product)
+                {
+                    temp.numerator = NumTimes;
+                    break;
+                }
+            }
+            NumTimes = zero_num;
+            while (1)
+            {
+                NumTimes = NumTimes + one_num;
+                DecTimes = times.denominator;
+                product = one_num;
+                while (1)
+                {
+                    product = product * NumTimes;
+                    DecTimes = DecTimes - one_num;
+                    if (DecTimes == zero_num)
+                        break;
+                }
+                if (temp.denominator == product)
+                {
+                    temp.denominator = NumTimes;
+                    break;
+                }
+            }
+            return temp;
+        }
+        temp.isPositive = false;
+        while (1)
+        {
+            temp.denominator = temp.denominator * this->denominator;
+            temp.numerator = temp.numerator * this->numerator;
+            NumTimes = NumTimes - one_num;
+            if (NumTimes == zero_num)
+                break;
+        }
+        while (1)
+        {
+            NumTimes = NumTimes + one_num;
+            DecTimes = times.denominator;
+            product = one_num;
+            while (1)
+            {
+                product = product * NumTimes;
+                DecTimes = DecTimes - one_num;
+                if (DecTimes == zero_num)
+                    break;
+            }
+            if (temp.numerator == product)
+            {
+                temp.numerator = NumTimes;
+                break;
+            }
+        }
+        NumTimes = zero_num;
+        while (1)
+        {
+            NumTimes = NumTimes + one_num;
+            DecTimes = times.denominator;
+            product = one_num;
+            while (1)
+            {
+                product = product * NumTimes;
+                DecTimes = DecTimes - one_num;
+                if (DecTimes == zero_num)
+                    break;
+            }
+            if (temp.denominator == product)
+            {
+                temp.denominator = NumTimes;
+                break;
+            }
+        }
+        return temp;
+    }
+    while (1)
+    {
+        temp.denominator = temp.denominator * this->denominator;
+        temp.numerator = temp.numerator * this->numerator;
+        NumTimes = NumTimes - one_num;
+        if (NumTimes == zero_num)
+            break;
+    }
+    while (1)
+    {
+        NumTimes = NumTimes + one_num;
+        DecTimes = times.denominator;
+        product = one_num;
+        while (1)
+        {
+            product = product * NumTimes;
+            DecTimes = DecTimes - one_num;
+            if (DecTimes == zero_num)
+                break;
+        }
+        if (temp.numerator == product)
+        {
+            temp.numerator = NumTimes;
+            break;
+        }
+    }
+    NumTimes = zero_num;
+    while (1)
+    {
+        NumTimes = NumTimes + one_num;
+        DecTimes = times.denominator;
+        product = one_num;
+        while (1)
+        {
+            product = product * NumTimes;
+            DecTimes = DecTimes - one_num;
+            if (DecTimes == zero_num)
+                break;
+        }
+        if (temp.denominator == product)
+        {
+            temp.denominator = NumTimes;
+            break;
+        }
+    }
+    return temp;
+}

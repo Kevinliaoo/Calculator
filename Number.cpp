@@ -319,7 +319,7 @@ Number Number::operator/(const Number &number)
     vector<int> temp_vector;
     if (number == zero)
     {
-        cout << "Error: Can not divide by zero\n";
+        cout << "Error: Can not divide by zero.\n";
         return zero;
     }
     else if (*this == zero)
@@ -333,6 +333,12 @@ Number Number::operator/(const Number &number)
     }
     else if (!number.isPositive)
         output = false;
+
+    if (dividend == divisor)
+    {
+        Number one(x + 1, 1, output);
+        return one;
+    }
     {
         int times = 0;
         int *d = new int[divisor.digits.size()];
@@ -383,6 +389,11 @@ Number Number::operator/(const Number &number)
                 remainder = now;
             if (temp_vector.size() != 0 || temp != 0)
                 temp_vector.push_back(temp);
+        }
+
+        for (int i = 0; i <= beSize - times - OrSize; i++)
+        {
+            temp_vector.push_back(0);
         }
 
         delete[] d;
@@ -652,13 +663,13 @@ void Number::changeSign()
     this->isPositive = !this->isPositive;
 }
 
-bool Number::getSign()
+bool Number::getSign() const
 // Getter function for isPositive
 {
     return this->isPositive;
 }
 
-bool Number::isEqualZero()
+bool Number::isEqualZero() const
 // Returns true if the number is zero, ignoring sign
 {
     if (this->size == 1)

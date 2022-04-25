@@ -25,10 +25,13 @@ int main()
     ss >> i1;
     cout << i1;*/
 
-    Integer i1;
-    cout << i1;
-    cin >> i1;
-    cout << i1;
+    Integer i1, i2;
+    cout << i1 << i2;
+    cin >> i1 >> i2;
+
+    Integer i3 = i1 / i2;
+    cout << i3;      // 不會跑 error
+    cout << i1 / i2; // 會跑 error
 
     /*
         map<string, Decimal> variables;

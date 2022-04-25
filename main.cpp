@@ -9,64 +9,82 @@ using namespace std;
 
 Decimal decimalDivision(const Number &num1, const Number num2);
 void printVariables(map<string, Decimal> &vars);
-Decimal makeCalculation(stringstream &ss);
+Decimal makeDecCalculation(stringstream &ss);
+Integer makeIntCalculation(stringstream &ss);
+vector<string> myStrTok(stringstream &ss);
+
+const string SET_STR = "SET";
+const string INTEGER_STR = "Integer";
+const string DECIMAL_STR = "Decimal";
 
 int main()
 {
     /*
-    map<string, Number> variables;
+    map<string, Decimal> variables;
     stringstream ss;
 
     Integer i1;
+    Decimal d1;
+
+    ss.clear();
     string aa = "-1234";
     ss.str(aa);
-
-    cout << i1;
     ss >> i1;
-    cout << i1;*/
 
-    Integer i1, i2;
-    cout << i1 << i2;
-    cin >> i1 >> i2;
+    ss.clear();
+    string bb = "123.4567900";
+    ss.str(bb);
+    ss >> d1;
 
-    Integer i3 = i1 / i2;
-    cout << i3;      // 不會跑 error
-    cout << i1 / i2; // 會跑 error
+    variables.insert(pair<string, Decimal>("i1", i1));
+    variables.insert(pair<string, Decimal>("d1", d1));
 
-    /*
-        map<string, Decimal> variables;
+    map<string, Decimal>::iterator itr;
+    for (itr = variables.begin(); itr != variables.end(); itr++)
+        cout << itr->first << ": " << itr->second;
+        */
 
-        string inputMessage;
-        stringstream ss;
+    map<string, Decimal> variables;
 
-        while (getline(cin, inputMessage))
+    string inputMessage;
+    stringstream ss;
+
+    while (getline(cin, inputMessage))
+    {
+        ss.str(inputMessage);
+
+        if (inputMessage.substr(0, 3) == SET_STR)
+        // Set a variable
         {
-            ss.str(inputMessage);
+            string datatype, varName, eqSign, value;
+            ss >> eqSign >> datatype >> varName >> eqSign;
 
-            if (inputMessage.substr(0, 3) == "SET")
-            // Set a variable
+            if (datatype == INTEGER_STR)
+                variables.insert(pair<string, Decimal>(varName, makeIntCalculation(ss)));
+            else if (datatype == DECIMAL_STR)
+                variables.insert(pair<string, Decimal>(varName, makeDecCalculation(ss)));
+            else
             {
-                string datatype, varName, eqSign, value;
-                ss >> eqSign >> datatype >> varName >> eqSign;
-
-                if (datatype != "Integer" && datatype != "Decimal")
-                {
-                    cout << "Error: Invalid datatype";
-                    continue;
-                }
-                variables.insert(pair<string, Decimal>(varName, makeCalculation(ss)));
+                cout << "Error: Invalid datatype";
+                continue;
             }
-
-            ss.clear();
         }
 
-        printVariables(variables);
-        */
-}
+        ss.clear();
+    }
 
-Decimal makeCalculation(stringstream &ss)
+    printVariables(variables);
+}
+Decimal makeDecCalculation(stringstream &ss)
 {
     Decimal temp;
+    ss >> temp;
+    return temp;
+}
+
+Integer makeIntCalculation(stringstream &ss)
+{
+    Integer temp;
     ss >> temp;
     return temp;
 }
@@ -75,7 +93,7 @@ void printVariables(map<string, Decimal> &vars)
 {
     map<string, Decimal>::iterator itr;
     for (itr = vars.begin(); itr != vars.end(); itr++)
-        cout << itr->first << ": " << itr->second << endl;
+        cout << itr->first << ": " << itr->second;
 }
 
 Decimal decimalDivision(const Number &num1, const Number num2)
@@ -136,4 +154,9 @@ Decimal decimalDivision(const Number &num1, const Number num2)
         quotient.changeSign();
 
     return Decimal(quotient, one_temp);
+}
+
+vector<string> myStrTok(stringstream &ss)
+// This function is like a strtok separating with spaces
+{
 }

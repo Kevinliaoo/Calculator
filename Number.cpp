@@ -648,6 +648,13 @@ Number Number::factorial()
     Number times = *this;
     Number one(x, 1, true);
     Number zero(x + 1, 1, true);
+    if (!this->isPositive)
+    {
+        cout << "Error: Can not calculate the factorial of a negative number\n";
+        return zero;
+    }
+    if (temp == zero)
+        return one;
     times = times - one;
     while (times > zero)
     {

@@ -3,6 +3,8 @@
 
 using namespace std;
 
+#ifndef _NUMBER_
+#define _NUMBER_
 class Number
 {
 private:
@@ -40,7 +42,10 @@ public:
     friend ostream &operator<<(ostream &strm, const Number &num);
     friend istream &operator>>(istream &strm, Number &num);
 };
+#endif
 
+#ifndef _DECIMAL_
+#define _DECIMAL_
 class Decimal
 {
 private:
@@ -68,7 +73,10 @@ public:
 
     Decimal power(const Decimal &times);
 };
+#endif
 
+#ifndef _INTEGER_
+#define _INTEGER_
 class Integer : public Decimal
 {
 private:
@@ -85,4 +93,8 @@ public:
 
     friend istream &operator>>(istream &strm, Integer &integer);
     friend ostream &operator<<(ostream &strm, Integer &integer);
+
+    Integer factorial();
 };
+
+#endif

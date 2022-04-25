@@ -10,9 +10,9 @@ Decimal::Decimal()
     Number zero;
     int a[1] = {1};
     Number one(a, 1, true);
-
     this->numerator = zero;
     this->denominator = one;
+    this->isPositive = true;
 }
 
 Decimal::Decimal(const Number &num, const Number &den)

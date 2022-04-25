@@ -59,6 +59,7 @@ istream &operator>>(istream &strm, Integer &integer)
     Number zero;
     strm >> zero;
     integer.numerator = zero;
+    integer.isPositive = zero.getSign();
     return strm;
 }
 
@@ -66,4 +67,10 @@ ostream &operator<<(ostream &strm, Integer &integer)
 {
     strm << integer.numerator;
     return strm;
+}
+
+Integer Integer::factorial()
+{
+    Number temp = temp.factorial();
+    return Integer(temp);
 }

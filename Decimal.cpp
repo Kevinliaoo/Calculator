@@ -15,6 +15,17 @@ Decimal::Decimal()
     this->isPositive = true;
 }
 
+Decimal::Decimal(const Number &num)
+{
+    this->numerator = num;
+    this->isPositive = num.getSign();
+    if (!num.getSign())
+        this->numerator.changeSign();
+    int a[1] = {1};
+    Number den(a, 1, true);
+    this->denominator = den;
+}
+
 Decimal::Decimal(const Number &num, const Number &den)
 {
     Number temp_num = num;

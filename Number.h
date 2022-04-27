@@ -61,6 +61,7 @@ protected:
 
 public:
     Decimal();
+    Decimal(const Number &num);
     Decimal(const Number &num, const Number &den);
 
     Decimal operator+(const Decimal &num);
@@ -81,7 +82,9 @@ class Integer : public Decimal
 {
 private:
 public:
-    Integer();
+    // The Integer's sign is NOT determined by bool isPositive,
+    // otherwise, it is determined by this->numerator's sign
+    Integer() : Decimal(){};
     Integer(const Number &num);
 
     Integer operator+(const Integer &integer);
@@ -96,5 +99,4 @@ public:
 
     Integer factorial();
 };
-
 #endif

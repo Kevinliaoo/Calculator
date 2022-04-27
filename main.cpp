@@ -11,14 +11,42 @@ Decimal decimalDivision(const Number &num1, const Number num2);
 void printVariables(map<string, Decimal> &vars);
 Decimal makeDecCalculation(stringstream &ss);
 Integer makeIntCalculation(stringstream &ss);
-vector<string> myStrTok(stringstream &ss);
+string processStringInput(string input, bool isDecimal);
+bool checkElementInVector(vector<string> source, string target);
 
-const string SET_STR = "SET";
+const string SET_STR = "Set";
 const string INTEGER_STR = "Integer";
 const string DECIMAL_STR = "Decimal";
+vector<string> SPECIAL_SYMBOLS;
+const string PLUS_SIGN = "+";
+const string MIN_SIGN = "-";
+const string MULT_SIGN = "*";
+const string DIV_SIGN = "/";
+const string FACT_SIGN = "!";
+const string POW_SIGN = "^";
+const string OPAR_SIGN = "(";
+const string CPAR_SIGN = ")";
+const string DOT_SIGN = ".";
+const string COMMA_SIGN = ",";
+const string POWER_KWORD = "Power";
+const string FACT_KWORD = "Factorial";
 
 int main()
 {
+    // Setting up special symbols (I can not use the vector constructor)
+    SPECIAL_SYMBOLS.push_back(PLUS_SIGN);
+    SPECIAL_SYMBOLS.push_back(MIN_SIGN);
+    SPECIAL_SYMBOLS.push_back(MULT_SIGN);
+    SPECIAL_SYMBOLS.push_back(DIV_SIGN);
+    SPECIAL_SYMBOLS.push_back(FACT_SIGN);
+    SPECIAL_SYMBOLS.push_back(POW_SIGN);
+    SPECIAL_SYMBOLS.push_back(OPAR_SIGN);
+    SPECIAL_SYMBOLS.push_back(CPAR_SIGN);
+    SPECIAL_SYMBOLS.push_back(DOT_SIGN);
+    SPECIAL_SYMBOLS.push_back(COMMA_SIGN);
+    SPECIAL_SYMBOLS.push_back(POWER_KWORD);
+    SPECIAL_SYMBOLS.push_back(FACT_KWORD);
+
     /*
     map<string, Decimal> variables;
     stringstream ss;
@@ -84,8 +112,12 @@ Decimal makeDecCalculation(stringstream &ss)
 
 Integer makeIntCalculation(stringstream &ss)
 {
+    // Read the stringstream and delete all spaces
+    string input = "", t;
+    while (ss >> t)
+        input += t;
+    processStringInput(input, false);
     Integer temp;
-    ss >> temp;
     return temp;
 }
 
@@ -156,7 +188,51 @@ Decimal decimalDivision(const Number &num1, const Number num2)
     return Decimal(quotient, one_temp);
 }
 
-vector<string> myStrTok(stringstream &ss)
-// This function is like a strtok separating with spaces
+string processStringInput(string input, bool isDecimal)
 {
+    vector<char> parenthesis_stack;
+    vector<int> parenthesis_index;
+
+    for (int i = 0; i < input.size(); i++)
+    {
+        char current = input[i];
+
+        // An open parenthesis ( detected
+        if (current == OPAR_SIGN[0])
+        {
+            parenthesis_stack.push_back(current);
+            parenthesis_index.push_back(i);
+        }
+
+        if (current == CPAR_SIGN[0])
+        {
+            if (parenthesis_stack.size() == 0)
+            // A close parenthesis detected without previously opening
+            {
+                cout << "Error: Invalid input.\n";
+                return "";
+            }
+            // Take what is inside the parenthesis
+            int j = parenthesis_stack.size() - 1;
+            string subInput = input.substr(parenthesis_index[j] + 1, i - 1);
+            cout << "The subinput is: " << subInput << endl;
+
+            // Power() or Factorial()
+
+            // Arithmetic operations
+        }
+    }
+
+    string res;
+    return res;
+}
+
+bool checkElementInVector(vector<string> source, string target)
+// This function checks if a string can be found in a string vector
+{
+    for (int i = 0; i < source.size(); i++)
+        if (source[i] == target)
+            return true;
+
+    return false;
 }

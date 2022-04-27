@@ -1,21 +1,11 @@
 #include "Number.h"
 
-Integer::Integer() : Decimal()
-{
-    int a[1] = {1};
-    Number one(a, 1, true);
-    Number zero;
-    this->numerator = zero;
-    this->denominator = one;
-}
-
-Integer::Integer(const Number &num) : Decimal()
+Integer::Integer(const Number &num) : Decimal(num)
 {
     this->isPositive = num.getSign();
-    this->numerator = num;
-    int a[1] = {1};
-    Number one(a, 1, true);
-    this->denominator = one;
+    // this->numerator stores object's sign
+    if (!this->numerator.getSign())
+        this->numerator.changeSign();
 }
 
 Integer Integer::operator+(const Integer &integer)
@@ -71,6 +61,7 @@ ostream &operator<<(ostream &strm, Integer &integer)
 
 Integer Integer::factorial()
 {
-    Number temp = temp.factorial();
+    Number temp;
+    temp = this->numerator.factorial();
     return Integer(temp);
 }

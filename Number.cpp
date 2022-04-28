@@ -483,16 +483,9 @@ Number Number::operator%(const Number &number)
             temp2.changeSign();
     }
 
-    while (temp > temp2)
-        temp = temp - temp2;
-
-    if (temp == temp2)
-        return zero;
-
-    if (!aa)
-        temp.changeSign();
-
-    return temp;
+    Number quot = temp / temp2;
+    Number reminder = temp - temp2 * quot;
+    return reminder;
 }
 
 ostream &operator<<(ostream &strm, const Number &num)

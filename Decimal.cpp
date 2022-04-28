@@ -65,13 +65,19 @@ Decimal Decimal::operator+(const Decimal &num)
     Number temp1 = this->numerator;
     Number temp2 = num.numerator;
 
+    Number div_1 = lcm / this->denominator;
+    Number div_2 = lcm / num.denominator;
+
+    // Change signs (since the sign is stored in the isPositive variable)
     if (!this->isPositive)
         temp1.changeSign();
     if (!num.isPositive)
         temp2.changeSign();
 
-    Number temp_num = temp1 * (lcm / this->denominator) + temp2 * (lcm / num.denominator);
+    temp1 = temp1 * div_1;
+    temp2 = temp2 * div_2;
 
+    Number temp_num = temp1 + temp2;
     return Decimal(temp_num, lcm);
 }
 

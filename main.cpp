@@ -7,12 +7,14 @@
 
 using namespace std;
 
+void printInstructions();
 Decimal decimalDivision(const Number &num1, const Number num2);
 void printVariables(map<string, Decimal> &vars);
 Decimal makeDecCalculation(stringstream &ss);
 Integer makeIntCalculation(stringstream &ss);
 string processStringInput(string input);
 bool checkElementInVector(vector<string> source, string target);
+string solveOperation(string input, string op);
 
 const string SET_STR = "Set";
 const string INTEGER_STR = "Integer";
@@ -30,9 +32,12 @@ const string DOT_SIGN = ".";
 const string COMMA_SIGN = ",";
 const string POWER_KWORD = "Power";
 const string FACT_KWORD = "Factorial";
+const string VARIABLES = "Variables";
 
 int main()
 {
+    printInstructions();
+
     // Setting up special symbols (I can not use the vector constructor)
     SPECIAL_SYMBOLS.push_back(PLUS_SIGN);
     SPECIAL_SYMBOLS.push_back(MIN_SIGN);
@@ -47,35 +52,12 @@ int main()
     SPECIAL_SYMBOLS.push_back(POWER_KWORD);
     SPECIAL_SYMBOLS.push_back(FACT_KWORD);
 
-    /*
-    map<string, Decimal> variables;
-    stringstream ss;
-
-    Integer i1;
-    Decimal d1;
-
-    ss.clear();
-    string aa = "-1234";
-    ss.str(aa);
-    ss >> i1;
-
-    ss.clear();
-    string bb = "123.4567900";
-    ss.str(bb);
-    ss >> d1;
-
-    variables.insert(pair<string, Decimal>("i1", i1));
-    variables.insert(pair<string, Decimal>("d1", d1));
-
-    map<string, Decimal>::iterator itr;
-    for (itr = variables.begin(); itr != variables.end(); itr++)
-        cout << itr->first << ": " << itr->second;
-        */
-
     map<string, Decimal> variables;
 
     string inputMessage;
     stringstream ss;
+
+    cout << "> ";
 
     while (getline(cin, inputMessage))
     {
@@ -97,20 +79,47 @@ int main()
                 continue;
             }
         }
+        else if (inputMessage.substr(0, VARIABLES.size()) == VARIABLES)
+            printVariables(variables);
+        else
+        {
+            cout << ss.str() << " = ";
+            Decimal res = makeDecCalculation(ss);
+            cout << "  " << res << endl;
+        }
 
         ss.clear();
+        cout << "> ";
     }
-
-    printVariables(variables);
 }
+
+void printInstructions()
+{
+    cout << "-----------------------------------------------------------------\n";
+    cout << "Instructions: \n";
+    cout << "\t1. Make operations: Insert the operation directly.\n";
+    cout << "\t2. Create a variable: Set + datatype + operation.\n";
+    cout << "\t3. List all variables: Variables\n";
+    cout << "\t4. Finish program: ctrl + d\n\n";
+    cout << "Reference\n";
+    cout << "datatypes: Integer or Decimal.\n";
+    cout << "           variable names can only be one character.\n";
+    cout << "operators: + - * / ! ^\n";
+    cout << "-----------------------------------------------------------------\n\n";
+}
+
 Decimal makeDecCalculation(stringstream &ss)
 {
     // Read the stringstream and delete all spaces
     string input = "", t;
     while (ss >> t)
         input += t;
-    processStringInput(input);
+    string result = processStringInput(input);
     Decimal temp;
+    stringstream stemp(result);
+    stemp >> temp;
+    // cout << "[log]: Variable value is: " << temp;
+    cout << endl;
     return temp;
 }
 
@@ -120,16 +129,22 @@ Integer makeIntCalculation(stringstream &ss)
     string input = "", t;
     while (ss >> t)
         input += t;
-    processStringInput(input);
+    string result = processStringInput(input);
     Integer temp;
+    stringstream stemp(result);
+    stemp >> temp;
+    // cout << "[log]: Variable value is: " << temp;
+    cout << endl;
     return temp;
 }
 
 void printVariables(map<string, Decimal> &vars)
 {
+    cout << "Variables list: \n";
     map<string, Decimal>::iterator itr;
     for (itr = vars.begin(); itr != vars.end(); itr++)
         cout << itr->first << ": " << itr->second;
+    cout << endl;
 }
 
 Decimal decimalDivision(const Number &num1, const Number num2)
@@ -219,16 +234,16 @@ string processStringInput(string input)
             // Take what is inside the parenthesis
             int j = parenthesis_index.back();
             string subInput = input.substr(j + 1, i - j - 1);
-            cout << "The subinput is: " << subInput << endl;
+            string subInputRes = processStringInput(subInput);
+
+            input.erase(j, i - j + 1);
+            input.insert(j, subInputRes);
 
             parenthesis_index.pop_back();
             parenthesis_stack.pop_back();
-
-            // Power() or Factorial()
-
-            // Arithmetic operations
         }
     }
+
     // At this step, all parenthesis are removed
     // Detect factorials
     int lastOpI = -1; // last operator index
@@ -270,27 +285,97 @@ string processStringInput(string input)
         }
     }
 
-    cout << input << endl;
-    cout << "[log]: Finished factorial.\n";
+    // cout << "[log]: Finished factorial.\n";
+    // cout << input << endl;
+
+    // At this step, we assume that there are no invalid characters
 
     // Detect Powers
+    input = solveOperation(input, POW_SIGN);
+
+    // cout << "[log]: Finished power.\n";
+    // cout << input << endl;
+
+    // Detect Multiplication
+    input = solveOperation(input, MULT_SIGN);
+
+    // cout << "[log]: Finished multiplication.\n";
+    // cout << input << endl;
+
+    // Detect Division
+    input = solveOperation(input, DIV_SIGN);
+
+    // cout << "[log]: Finished division.\n";
+    // cout << input << endl;
+
+    // Addition and subtraction
+    Decimal zero;
+    string num_s;
+    char op = PLUS_SIGN[0];
+    stringstream ss;
+    for (int i = 0; i < input.size(); i++)
+    {
+        char current = input[i];
+
+        if ((current - '0' < 0 || current - '0' > 9) && current != DOT_SIGN[0])
+        {
+            ss.clear();
+            ss.str(num_s);
+            Decimal temp;
+            ss >> temp;
+            num_s = "";
+            if (op == PLUS_SIGN[0])
+                zero = zero + temp;
+            else if (op == MIN_SIGN[0])
+                zero = zero - temp;
+
+            if (current == PLUS_SIGN[0])
+                op = PLUS_SIGN[0];
+            else if (current == MIN_SIGN[0])
+                op = MIN_SIGN[0];
+        }
+        else
+            num_s += current;
+    }
+    // Final operation
+    ss.clear();
+    ss.str(num_s);
+    Decimal temp;
+    ss >> temp;
+    num_s = "";
+    if (op == PLUS_SIGN[0])
+        zero = zero + temp;
+    else if (op == MIN_SIGN[0])
+        zero = zero - temp;
+
+    // cout << "[log]: Finished computation.\n";
+    // cout << "[log]: Final result: " << zero;
+
+    return zero.toString();
+}
+
+string solveOperation(string input, string op)
+// Resolves power, multiplication and division
+// Precondition: input is the string containing the operation
+// op is the operation to be executed
+{
     while (true)
     {
-        // At this step, we assume that there are no invalid characters
+        // Separate the operands
         string temp1, temp2;
         stringstream ss(input);
-        getline(ss, temp1, POW_SIGN[0]);
+        getline(ss, temp1, op[0]);
 
-        // No ^ sign was detected
+        // No operation sign was detected
         if (temp1.size() == input.size())
             break;
 
-        getline(ss, temp2, POW_SIGN[0]);
+        getline(ss, temp2, op[0]);
 
         int cut_start = temp1.size();
 
-        string base_s = "", exponent_s = "";
-        // Get the base
+        string fact1_s = "", fact2_s = "";
+        // Get the numbers to be operated
         for (int i = temp1.size() - 1; i >= 0; i--)
         {
             string s = "";
@@ -299,12 +384,12 @@ string processStringInput(string input)
                 break;
             else
             {
-                base_s = s + base_s;
+                fact1_s = s + fact1_s;
                 cut_start--;
             }
         }
 
-        // Get the exponent
+        // Get the second factor
         for (int i = 0; i < temp2.size(); i++)
         {
             string s = "";
@@ -312,37 +397,44 @@ string processStringInput(string input)
             if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN)
             {
                 if (i == 0 && s == MIN_SIGN)
-                    exponent_s += s;
+                    fact2_s += s;
                 else
                     break;
             }
             else
-                exponent_s += s;
+                fact2_s += s;
         }
 
-        int cut_size = base_s.size() + exponent_s.size() + 1;
+        int cut_size = fact1_s.size() + fact2_s.size() + 1;
 
-        Decimal base, exp;
+        // Build the numbers
+        Decimal fact1, fact2;
         ss.clear();
-        ss.str(base_s);
-        ss >> base;
+        ss.str(fact1_s);
+        ss >> fact1;
         ss.clear();
-        ss.str(exponent_s);
-        ss >> exp;
-        Decimal res = base.power(exp);
+        ss.str(fact2_s);
+        ss >> fact2;
+        Decimal res;
 
+        // Compute the operations
+        if (op == MULT_SIGN)
+            res = fact1 * fact2;
+        else if (op == POW_SIGN)
+            res = fact1.power(fact2);
+        else if (op == DIV_SIGN)
+            res = fact1 / fact2;
+
+        // Replace the operation with the result
         input.erase(cut_start, cut_size);
         input.insert(cut_start, res.toString());
 
+        // Go over again
         ss.clear();
         ss.str(input);
     }
 
-    cout << "[log]: Finished power.\n";
-    cout << input << endl;
-
-    string res;
-    return res;
+    return input;
 }
 
 bool checkElementInVector(vector<string> source, string target)

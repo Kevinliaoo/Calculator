@@ -141,9 +141,8 @@ Decimal Decimal::operator/(const Decimal &num)
 
 Decimal Decimal::operator*(const Decimal &num)
 {
-    int x[] = {0};
-    Number int_zero(x, 1, true);
-    Decimal zero(int_zero, int_zero);
+    Number int_zero;
+    Decimal zero;
     Decimal a = *this;
     Decimal b = num;
     bool isPos = true;
@@ -164,6 +163,10 @@ Decimal Decimal::operator*(const Decimal &num)
 
     Number new_den = a.denominator * b.denominator;
     Number new_num = a.numerator * b.numerator;
+
+    if (!isPos)
+        new_num.changeSign();
+
     return Decimal(new_num, new_den);
 }
 

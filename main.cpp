@@ -209,7 +209,7 @@ string processStringInput(string input, bool isDecimal)
             if (parenthesis_stack.size() == 0)
             // A close parenthesis detected without previously opening
             {
-                cout << "Error: Invalid input.\n";
+                cout << "Error: Invalid input (parenthesis does not match).\n";
                 return "";
             }
             // Take what is inside the parenthesis
@@ -227,7 +227,7 @@ string processStringInput(string input, bool isDecimal)
     }
     // At this step, all parenthesis are removed
     // Detect factorials
-    int lastOpI = 0; // last operator index
+    int lastOpI = -1; // last operator index
     for (int i = 0; i < input.size(); i++)
     {
         if (input[i] - '0' >= 0 && input[i] - '0' <= 9)
@@ -235,11 +235,12 @@ string processStringInput(string input, bool isDecimal)
         }
         else
         {
+            bool factCalculated = false;
             string s = "";
             s += input[i];
             if (!checkElementInVector(SPECIAL_SYMBOLS, s))
             {
-                cout << "Error: Invalid input.\n";
+                cout << "Error: Invalid input (invalid characters detected).\n";
                 return "";
             }
             else if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN)
@@ -247,16 +248,37 @@ string processStringInput(string input, bool isDecimal)
                 if (s == FACT_SIGN)
                 {
                     string subInput = input.substr(lastOpI + 1, i - lastOpI - 1);
-                    cout << "The substring: " << subInput << endl;
                     Integer temp;
                     stringstream ss(subInput);
                     ss >> temp;
-                    cout << "The number: " << temp;
+                    temp = temp.factorial();
+                    subInput += '!';
+                    input.erase(lastOpI + 1, subInput.size());
+                    input.insert(lastOpI + 1, temp.toString());
+                    factCalculated = true;
+                    i--;
                 }
-                lastOpI = i;
+                if (!factCalculated)
+                    lastOpI = i;
+
+                factCalculated = false;
             }
         }
     }
+
+    cout << input << endl;
+    cout << "[log]: Finished factorial.\n";
+
+    // Detect Powers
+    lastOpI = -1; // last operator index
+    for (int i = 0; i < input.size(); i++)
+    {
+        // At this step, we assume that there are no invalid characters
+        // cout << "The input: " << input << endl;
+        string temp;
+        stringstream ss(input);
+    }
+
     string res;
     return res;
 }

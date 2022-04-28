@@ -85,7 +85,7 @@ bool Number::operator==(const Number &number) const
     return true;
 }
 
-Number Number::operator*(const Number &number)
+const Number Number::operator*(const Number &number) const
 {
     bool isPos = true;
     int x[] = {0};
@@ -147,7 +147,7 @@ Number Number::operator*(const Number &number)
     return Number(product, newSize, isPos);
 }
 
-Number Number::operator-(const Number &number)
+const Number Number::operator-(const Number &number) const
 {
     Number zero;
     if (this->isPositive)
@@ -250,7 +250,7 @@ Number Number::operator-(const Number &number)
     }
 }
 
-Number Number::operator+(const Number &number)
+const Number Number::operator+(const Number &number) const
 {
     Number zero;
     if (this->isPositive)
@@ -352,7 +352,7 @@ Number Number::operator+(const Number &number)
     }
 }
 
-Number Number::operator/(const Number &number)
+const Number Number::operator/(const Number &number) const
 {
     int x[] = {0, 1, 2};
     bool output = true;
@@ -454,7 +454,7 @@ Number Number::operator/(const Number &number)
     }
 }
 
-Number Number::operator%(const Number &number)
+const Number Number::operator%(const Number &number) const
 {
     int a[1] = {0};
     Number zero(a, 1, true);
@@ -561,7 +561,7 @@ istream &operator>>(istream &strm, Number &num)
 }
 
 // Helper functions
-Number Number::add(const Number &number) const
+const Number Number::add(const Number &number) const
 // This function adds two numbers
 // Precondition: both this and number are considered positive numbers
 // and this is biger than number
@@ -570,13 +570,15 @@ Number Number::add(const Number &number) const
     int i = 0, j = 0, k = 0;
     int digit_size = this->size + 1;
     int *digit_temp = new int[digit_size];
+    vector<int> this_copy = this->digits;
+
     for (int x = 0; x < digit_size; x++)
         digit_temp[x] = 0;
 
     bool carry = false;
     while (i < this->size && j < number.size)
     {
-        int temp = this->digits[i] + number.digits[j];
+        int temp = this_copy[i] + number.digits[j];
         if (carry)
         {
             temp++;
@@ -596,7 +598,7 @@ Number Number::add(const Number &number) const
     }
     while (i < this->size)
     {
-        int temp = carry ? this->digits[i] + 1 : this->digits[i];
+        int temp = carry ? this_copy[i] + 1 : this_copy[i];
         if (carry)
             carry = false;
         if (temp > 9)
@@ -629,27 +631,33 @@ Number Number::add(const Number &number) const
     for (int x = 0; x < digit_size - countZeros; x++)
         temp[x] = digit_temp[x];
 
-    return Number(temp, digit_size - countZeros, true);
+    Number res(temp, digit_size - countZeros, true);
+    delete[] digit_temp;
+    delete[] temp;
+
+    return res;
 }
 
-Number Number::subtract(const Number &number)
+const Number Number::subtract(const Number &number) const
 // This function substract a number to itself (positive result)
 // Precondition: number is smaller than this, both numbers are considered positive
 // Postcondition: return the this - number (always positive)
 {
     int i = 0, j = 0, k = 0;
     int *dig_temp = new int[this->size];
+    vector<int> this_copy = this->digits;
+
     for (int x = 0; x < this->size; x++)
         dig_temp[x] = 0;
 
     while (i < this->size && j < number.size)
     {
-        if (this->digits[i] >= number.digits[j])
-            dig_temp[k] = this->digits[i] - number.digits[j];
+        if (this_copy[i] >= number.digits[j])
+            dig_temp[k] = this_copy[i] - number.digits[j];
         else
         {
-            this->digits[i + 1] -= 1;
-            dig_temp[k] = this->digits[i] + 10 - number.digits[j];
+            this_copy[i + 1] -= 1;
+            dig_temp[k] = this_copy[i] + 10 - number.digits[j];
         }
 
         i++;
@@ -658,12 +666,12 @@ Number Number::subtract(const Number &number)
     }
     while (i < this->size)
     {
-        if (this->digits[i] >= 0)
-            dig_temp[k] = this->digits[i];
+        if (this_copy[i] >= 0)
+            dig_temp[k] = this_copy[i];
         else
         {
-            this->digits[i + 1] -= 1;
-            dig_temp[k] = this->digits[i] + 10;
+            this_copy[i + 1] -= 1;
+            dig_temp[k] = this_copy[i] + 10;
         }
 
         i++;
@@ -689,7 +697,12 @@ Number Number::subtract(const Number &number)
     for (int x = 0; x < this->size - countZeros; x++)
         temp[x] = dig_temp[x];
 
-    return Number(temp, this->size - countZeros, true);
+    Number res(temp, this->size - countZeros, true);
+
+    delete[] dig_temp;
+    delete[] temp;
+
+    return res;
 }
 
 Number Number::factorial()

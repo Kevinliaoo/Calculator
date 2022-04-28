@@ -12,19 +12,19 @@ private:
     bool isPositive;    // true if it is a positive number
     int size;           // The size of the number
 
-    Number subtract(const Number &number);  // Helper function for operator-
-    Number add(const Number &number) const; // Helper function for operator+
+    const Number subtract(const Number &number) const; // Helper function for operator-
+    const Number add(const Number &number) const;      // Helper function for operator+
 
 public:
     Number();
     Number(int *a, int size, bool isPositive);
 
     Number &operator=(const Number &number);
-    Number operator*(const Number &number);
-    Number operator-(const Number &number);
-    Number operator+(const Number &number);
-    Number operator%(const Number &number);
-    Number operator/(const Number &number);
+    const Number operator*(const Number &number) const;
+    const Number operator-(const Number &number) const;
+    const Number operator+(const Number &number) const;
+    const Number operator%(const Number &number) const;
+    const Number operator/(const Number &number) const;
     bool operator>(const Number &number) const;
     bool operator==(const Number &number) const;
     int operator[](int index) const;
@@ -65,11 +65,11 @@ public:
     Decimal(const Number &num);
     Decimal(const Number &num, const Number &den);
 
-    Decimal operator+(const Decimal &num);
-    Decimal operator-(const Decimal &num);
-    Decimal operator-();
-    Decimal operator*(const Decimal &num);
-    Decimal operator/(const Decimal &num);
+    const Decimal operator+(const Decimal &num) const;
+    const Decimal operator-(const Decimal &num) const;
+    const Decimal operator-() const;
+    const Decimal operator*(const Decimal &num) const;
+    const Decimal operator/(const Decimal &num) const;
     Decimal &operator=(const Decimal &num);
     bool operator==(const Decimal &num) const;
 
@@ -78,7 +78,7 @@ public:
 
     Decimal power(const Decimal &times);
     string toString();
-    Decimal simplify(const Decimal &num);
+    const Decimal simplify(const Decimal &num) const;
 };
 #endif
 
@@ -93,11 +93,11 @@ public:
     Integer() : Decimal(){};
     Integer(const Number &num);
 
-    Integer operator+(const Integer &integer);
-    Integer operator-(const Integer &integer);
-    Integer operator-();
-    Integer operator*(const Integer &integer);
-    Integer operator/(const Integer &integer);
+    const Integer operator+(const Integer &integer) const;
+    const Integer operator-(const Integer &integer) const;
+    const Integer operator-() const;
+    const Integer operator*(const Integer &integer) const;
+    const Integer operator/(const Integer &integer) const;
     Integer &operator=(const Integer &integer);
     bool operator==(const Integer &integer) const;
 

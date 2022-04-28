@@ -55,7 +55,7 @@ Decimal::Decimal(const Number &num, const Number &den)
     this->denominator = temp_den;
 }
 
-Decimal Decimal::operator+(const Decimal &num)
+const Decimal Decimal::operator+(const Decimal &num) const
 {
     Number lcm = this->denominator;
 
@@ -81,7 +81,7 @@ Decimal Decimal::operator+(const Decimal &num)
     return Decimal(temp_num, lcm);
 }
 
-Decimal Decimal::operator-(const Decimal &num)
+const Decimal Decimal::operator-(const Decimal &num) const
 {
     Number lcm = this->denominator;
 
@@ -101,13 +101,13 @@ Decimal Decimal::operator-(const Decimal &num)
     return Decimal(temp_num, lcm);
 }
 
-Decimal Decimal::operator-()
+const Decimal Decimal::operator-() const
 {
     Decimal zero;
     return zero - *this;
 }
 
-Decimal Decimal::operator/(const Decimal &num)
+const Decimal Decimal::operator/(const Decimal &num) const
 {
     int x[] = {0};
     Number int_zero(x, 1, true);
@@ -139,7 +139,7 @@ Decimal Decimal::operator/(const Decimal &num)
     return Decimal(new_num, new_den);
 }
 
-Decimal Decimal::operator*(const Decimal &num)
+const Decimal Decimal::operator*(const Decimal &num) const
 {
     Number int_zero;
     Decimal zero;
@@ -280,7 +280,7 @@ string Decimal::toString()
     return res;
 }
 
-Decimal Decimal::simplify(const Decimal &num)
+const Decimal Decimal::simplify(const Decimal &num) const
 {
     Decimal object = num;
     Number GCD = getGCD(object.denominator, object.numerator);

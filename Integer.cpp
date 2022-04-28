@@ -7,31 +7,31 @@ Integer::Integer(const Number &num) : Decimal(num)
         this->numerator.changeSign();
 }
 
-Integer Integer::operator+(const Integer &integer)
+const Integer Integer::operator+(const Integer &integer) const
 {
     Number newNum = this->numerator + integer.numerator;
     return Integer(newNum);
 }
 
-Integer Integer::operator-(const Integer &integer)
+const Integer Integer::operator-(const Integer &integer) const
 {
     Number newNum = this->numerator - integer.numerator;
     return Integer(newNum);
 }
 
-Integer Integer::operator-()
+const Integer Integer::operator-() const
 {
     Integer zero;
     return zero - *this;
 }
 
-Integer Integer::operator*(const Integer &integer)
+const Integer Integer::operator*(const Integer &integer) const
 {
     Number newNum = this->numerator * integer.numerator;
     return Integer(newNum);
 }
 
-Integer Integer::operator/(const Integer &integer)
+const Integer Integer::operator/(const Integer &integer) const
 {
     Number newNum = this->numerator / integer.numerator;
     Integer res(newNum);

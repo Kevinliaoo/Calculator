@@ -2,9 +2,8 @@
 
 Integer::Integer(const Number &num) : Decimal(num)
 {
-    this->isPositive = num.getSign();
     // this->numerator stores object's sign
-    if (!this->numerator.getSign())
+    if (!num.getSign())
         this->numerator.changeSign();
 }
 

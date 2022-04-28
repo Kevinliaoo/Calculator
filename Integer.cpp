@@ -75,3 +75,9 @@ Integer Integer::factorial()
     temp = this->numerator.factorial();
     return Integer(temp);
 }
+
+Integer Integer::power(const Integer &times)
+{
+    Number temp = this->numerator.power(times.numerator);
+    return Integer(temp);
+}

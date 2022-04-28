@@ -105,8 +105,12 @@ int main()
 }
 Decimal makeDecCalculation(stringstream &ss)
 {
+    // Read the stringstream and delete all spaces
+    string input = "", t;
+    while (ss >> t)
+        input += t;
+    processStringInput(input, true);
     Decimal temp;
-    ss >> temp;
     return temp;
 }
 
@@ -270,14 +274,58 @@ string processStringInput(string input, bool isDecimal)
     cout << "[log]: Finished factorial.\n";
 
     // Detect Powers
-    lastOpI = -1; // last operator index
-    for (int i = 0; i < input.size(); i++)
+    bool run = true;
+    while (run)
     {
         // At this step, we assume that there are no invalid characters
-        // cout << "The input: " << input << endl;
-        string temp;
+        string temp1, temp2;
         stringstream ss(input);
+        getline(ss, temp1, POW_SIGN[0]);
+        // No ^ sign was detected
+        if (temp1.size() == input.size())
+            run = false;
+
+        getline(ss, temp2, POW_SIGN[0]);
+
+        string base_s = "", exponent_s = "";
+
+        // Get the base
+        for (int i = temp1.size() - 1; i >= 0; i--)
+        {
+            string s = "";
+            s += temp1[i];
+            if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN)
+                break;
+            else
+                base_s = s + base_s;
+        }
+
+        // Get the exponent
+        for (int i = 0; i < temp2.size(); i++)
+        {
+            string s = "";
+            s += temp2[i];
+            if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN)
+                break;
+            else
+                exponent_s += s;
+        }
+
+        cout << "The base is: " << base_s << endl;
+        cout << "The exponen: " << exponent_s << endl;
+
+        string res;
+        if (isDecimal)
+        {
+        }
+        else
+        {
+        }
+
+        break;
     }
+
+    cout << "[log]: Finished power.\n";
 
     string res;
     return res;

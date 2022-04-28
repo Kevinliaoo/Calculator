@@ -106,5 +106,6 @@ public:
 
     Integer factorial();
     string toString();
+    Integer power(const Integer &times);
 };
 #endif

@@ -506,6 +506,7 @@ istream &operator>>(istream &strm, Number &num)
     int size = numberString.size();
     bool isPositive = true;
     vector<int> digitsVect;
+    bool decimalPointDetected = false;
 
     for (int i = size - 1; i >= 0; i--)
     {
@@ -523,8 +524,17 @@ istream &operator>>(istream &strm, Number &num)
         int intDigit = currentDigit - '0';
         if (intDigit < 0 || intDigit > 9)
         {
-            cout << "Error: Invalid input\n";
-            return strm;
+            if (currentDigit == '.' && !decimalPointDetected)
+            {
+                decimalPointDetected = true;
+                digitsVect.clear();
+                continue;
+            }
+            else
+            {
+                cout << "Error: Invalid input\n";
+                return strm;
+            }
         }
 
         digitsVect.push_back(intDigit);

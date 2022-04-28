@@ -149,17 +149,27 @@ Number Number::operator*(const Number &number)
 
 Number Number::operator-(const Number &number)
 {
+    Number zero;
     if (this->isPositive)
     {
         if (this->operator>(number))
         {
             if (number.isPositive)
-                return this->subtract(number);
+            {
+                Number res = this->subtract(number);
+                // Solve -0 bug
+                if (res == zero && !res.getSign())
+                    res.changeSign();
+                return res;
+            }
             else
             {
-                Number temp = number;
-                temp.changeSign();
-                return this->add(temp);
+                Number res = number;
+                res.changeSign();
+                res = this->add(res);
+                if (res == zero && !res.getSign())
+                    res.changeSign();
+                return res;
             }
         }
         else
@@ -170,13 +180,18 @@ Number Number::operator-(const Number &number)
                 Number temp2 = number;
                 temp1 = temp2.subtract(temp1);
                 temp1.changeSign();
+                if (temp1 == zero && !temp1.getSign())
+                    temp1.changeSign();
                 return temp1;
             }
             else
             {
-                Number temp = number;
-                temp.changeSign();
-                return temp.add(*this);
+                Number res = number;
+                res.changeSign();
+                res = res.add(*this);
+                if (res == zero && !res.getSign())
+                    res.changeSign();
+                return res;
             }
         }
     }
@@ -190,6 +205,8 @@ Number Number::operator-(const Number &number)
                 temp1.changeSign();
                 temp1 = temp1.add(number);
                 temp1.changeSign();
+                if (temp1 == zero && !temp1.getSign())
+                    temp1.changeSign();
                 return temp1;
             }
             else
@@ -200,6 +217,8 @@ Number Number::operator-(const Number &number)
                 temp2.changeSign();
                 temp1 = temp1.subtract(temp2);
                 temp1.changeSign();
+                if (temp1 == zero && !temp1.getSign())
+                    temp1.changeSign();
                 return temp1;
             }
         }
@@ -212,6 +231,8 @@ Number Number::operator-(const Number &number)
                 temp1.changeSign();
                 temp1 = temp2.add(temp1);
                 temp1.changeSign();
+                if (temp1 == zero && !temp1.getSign())
+                    temp1.changeSign();
                 return temp1;
             }
             else
@@ -221,6 +242,8 @@ Number Number::operator-(const Number &number)
                 temp1.changeSign();
                 temp2.changeSign();
                 temp1 = temp2.subtract(temp1);
+                if (temp1 == zero && !temp1.getSign())
+                    temp1.changeSign();
                 return temp1;
             }
         }
@@ -229,23 +252,38 @@ Number Number::operator-(const Number &number)
 
 Number Number::operator+(const Number &number)
 {
+    Number zero;
     if (this->isPositive)
     {
         if (this->operator>(number))
         {
             if (number.isPositive)
-                return this->add(number);
+            {
+                Number res = this->add(number);
+                // Solve -0 bug
+                if (res == zero && !res.getSign())
+                    res.changeSign();
+                return res;
+            }
             else
             {
-                Number temp = number;
-                temp.changeSign();
-                return this->subtract(temp);
+                Number res = number;
+                res.changeSign();
+                res = this->subtract(res);
+                if (res == zero && !res.getSign())
+                    res.changeSign();
+                return res;
             }
         }
         else
         {
             if (number.isPositive)
-                return number.add(*this);
+            {
+                Number res = number.add(*this);
+                if (res == zero && !res.getSign())
+                    res.changeSign();
+                return res;
+            }
             else
             {
                 Number temp1 = *this;
@@ -253,6 +291,8 @@ Number Number::operator+(const Number &number)
                 temp2.changeSign();
                 temp1 = temp2.subtract(temp1);
                 temp1.changeSign();
+                if (temp1 == zero && !temp1.getSign())
+                    temp1.changeSign();
                 return temp1;
             }
         }
@@ -263,11 +303,13 @@ Number Number::operator+(const Number &number)
         {
             if (number.isPositive)
             {
-                Number temp = *this;
-                temp.changeSign();
-                temp = temp.subtract(number);
-                temp.changeSign();
-                return temp;
+                Number res = *this;
+                res.changeSign();
+                res = res.subtract(number);
+                res.changeSign();
+                if (res == zero && !res.getSign())
+                    res.changeSign();
+                return res;
             }
             else
             {
@@ -277,6 +319,8 @@ Number Number::operator+(const Number &number)
                 temp2.changeSign();
                 temp1 = temp1.add(temp2);
                 temp1.changeSign();
+                if (temp1 == zero && !temp1.getSign())
+                    temp1.changeSign();
                 return temp1;
             }
         }
@@ -288,6 +332,8 @@ Number Number::operator+(const Number &number)
                 Number temp2 = number;
                 temp1.changeSign();
                 temp1 = temp2.subtract(temp1);
+                if (temp1 == zero && !temp1.getSign())
+                    temp1.changeSign();
                 return temp1;
             }
             else
@@ -298,6 +344,8 @@ Number Number::operator+(const Number &number)
                 temp2.changeSign();
                 temp1 = temp2.add(temp1);
                 temp1.changeSign();
+                if (temp1 == zero && !temp1.getSign())
+                    temp1.changeSign();
                 return temp1;
             }
         }

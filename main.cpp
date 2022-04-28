@@ -213,15 +213,19 @@ string processStringInput(string input, bool isDecimal)
                 return "";
             }
             // Take what is inside the parenthesis
-            int j = parenthesis_stack.size() - 1;
-            string subInput = input.substr(parenthesis_index[j] + 1, i - 1);
+            int j = parenthesis_index.back();
+            string subInput = input.substr(j + 1, i - j - 1);
             cout << "The subinput is: " << subInput << endl;
+
+            parenthesis_index.pop_back();
+            parenthesis_stack.pop_back();
 
             // Power() or Factorial()
 
             // Arithmetic operations
         }
     }
+    // At this step, all parenthesis are removed
 
     string res;
     return res;

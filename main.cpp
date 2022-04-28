@@ -226,7 +226,37 @@ string processStringInput(string input, bool isDecimal)
         }
     }
     // At this step, all parenthesis are removed
-
+    // Detect factorials
+    int lastOpI = 0; // last operator index
+    for (int i = 0; i < input.size(); i++)
+    {
+        if (input[i] - '0' >= 0 && input[i] - '0' <= 9)
+        {
+        }
+        else
+        {
+            string s = "";
+            s += input[i];
+            if (!checkElementInVector(SPECIAL_SYMBOLS, s))
+            {
+                cout << "Error: Invalid input.\n";
+                return "";
+            }
+            else if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN)
+            {
+                if (s == FACT_SIGN)
+                {
+                    string subInput = input.substr(lastOpI + 1, i - lastOpI - 1);
+                    cout << "The substring: " << subInput << endl;
+                    Integer temp;
+                    stringstream ss(subInput);
+                    ss >> temp;
+                    cout << "The number: " << temp;
+                }
+                lastOpI = i;
+            }
+        }
+    }
     string res;
     return res;
 }

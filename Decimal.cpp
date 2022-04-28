@@ -95,6 +95,72 @@ Decimal Decimal::operator-(const Decimal &num)
     return Decimal(temp_num, lcm);
 }
 
+Decimal Decimal::operator-()
+{
+    Decimal zero;
+    return zero - *this;
+}
+
+Decimal Decimal::operator/(const Decimal &num)
+{
+    int x[] = {0};
+    Number int_zero(x, 1, true);
+    Decimal zero(int_zero, int_zero);
+    Decimal a = *this;
+    Decimal b = num;
+    bool isPos = true;
+
+    a = simplify(a);
+    b = simplify(b);
+    if (b.denominator == int_zero || b.numerator == int_zero)
+    {
+        cout << "Error: Can not divide by zero\n";
+        return zero;
+    }
+    if (a.denominator == int_zero || a.numerator == int_zero)
+        return zero;
+
+    if (!a.isPositive)
+    {
+        if (b.isPositive)
+            isPos = false;
+    }
+    else if (!b.isPositive)
+        isPos = false;
+
+    Number new_den = a.denominator * b.numerator;
+    Number new_num = a.numerator * b.denominator;
+    return Decimal(new_num, new_den);
+}
+
+Decimal Decimal::operator*(const Decimal &num)
+{
+    int x[] = {0};
+    Number int_zero(x, 1, true);
+    Decimal zero(int_zero, int_zero);
+    Decimal a = *this;
+    Decimal b = num;
+    bool isPos = true;
+
+    a = simplify(a);
+    b = simplify(b);
+    if (a.denominator == int_zero || a.numerator == int_zero)
+        return zero;
+    if (b.denominator == int_zero || b.numerator == int_zero)
+        return zero;
+    if (!a.isPositive)
+    {
+        if (b.isPositive)
+            isPos = false;
+    }
+    else if (!b.isPositive)
+        isPos = false;
+
+    Number new_den = a.denominator * b.denominator;
+    Number new_num = a.numerator * b.numerator;
+    return Decimal(new_num, new_den);
+}
+
 void Decimal::printFraction()
 {
     cout << "   ";
@@ -172,6 +238,46 @@ void Decimal::divideSelf()
 
     this->numerator = quotient;
     this->denominator = one_temp;
+}
+
+string Decimal::toString()
+{
+    string res;
+    Decimal temp = *this;
+
+    temp.divideSelf();
+
+    if (!temp.isPositive)
+        res += "-";
+
+    int noZeroPositions = temp.numerator.getSize() - temp.denominator.getSize() + 1;
+
+    if (noZeroPositions == 0)
+        res += "0";
+    else if (noZeroPositions < 0)
+    {
+        res += "0.";
+        for (int i = 0; i < -noZeroPositions; i++)
+            res += "0";
+    }
+
+    for (int i = 0; i < temp.numerator.getSize(); i++)
+    {
+        if (i == noZeroPositions)
+            res += ".";
+        res += to_string(temp.numerator[i]);
+    }
+
+    return res;
+}
+
+Decimal Decimal::simplify(const Decimal &num)
+{
+    Decimal object = num;
+    Number GCD = getGCD(object.denominator, object.numerator);
+    object.denominator = object.denominator / GCD;
+    object.numerator = object.numerator / GCD;
+    return object;
 }
 
 ostream &operator<<(ostream &strm, const Decimal &num)

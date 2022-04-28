@@ -36,6 +36,7 @@ public:
     bool isEqualZero() const;
     void insertFront(int d);
     int getSize();
+    virtual string toString();
 
     friend Number getGCD(const Number &num1, const Number &num2);
     friend Number getLCM(const Number &num1, const Number &num2);
@@ -66,6 +67,9 @@ public:
 
     Decimal operator+(const Decimal &num);
     Decimal operator-(const Decimal &num);
+    Decimal operator-();
+    Decimal operator*(const Decimal &num);
+    Decimal operator/(const Decimal &num);
     Decimal &operator=(const Decimal &num);
     bool operator==(const Decimal &num) const;
 
@@ -73,6 +77,8 @@ public:
     friend istream &operator>>(istream &strm, Decimal &num);
 
     Decimal power(const Decimal &times);
+    string toString();
+    Decimal simplify(const Decimal &num);
 };
 #endif
 
@@ -89,6 +95,7 @@ public:
 
     Integer operator+(const Integer &integer);
     Integer operator-(const Integer &integer);
+    Integer operator-();
     Integer operator*(const Integer &integer);
     Integer operator/(const Integer &integer);
     Integer &operator=(const Integer &integer);
@@ -98,5 +105,6 @@ public:
     friend ostream &operator<<(ostream &strm, Integer &integer);
 
     Integer factorial();
+    string toString();
 };
 #endif

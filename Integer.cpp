@@ -20,6 +20,12 @@ Integer Integer::operator-(const Integer &integer)
     return Integer(newNum);
 }
 
+Integer Integer::operator-()
+{
+    Integer zero;
+    return zero - *this;
+}
+
 Integer Integer::operator*(const Integer &integer)
 {
     Number newNum = this->numerator * integer.numerator;
@@ -57,6 +63,11 @@ ostream &operator<<(ostream &strm, Integer &integer)
 {
     strm << integer.numerator;
     return strm;
+}
+
+string Integer::toString()
+{
+    return this->numerator.toString();
 }
 
 Integer Integer::factorial()

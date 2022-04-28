@@ -806,6 +806,18 @@ Number Number::power(const Number &times)
     return temp;
 }
 
+string Number::toString()
+{
+    Number num = *this;
+    string res = "";
+    if (!num.isPositive)
+        res += "-";
+    for (int i = 0; i < num.size; i++)
+        res += to_string(num.digits[num.size - 1 - i]);
+
+    return res;
+}
+
 // Friend functions
 
 Number getGCD(const Number &num1, const Number &num2)

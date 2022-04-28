@@ -11,7 +11,7 @@ Decimal decimalDivision(const Number &num1, const Number num2);
 void printVariables(map<string, Decimal> &vars);
 Decimal makeDecCalculation(stringstream &ss);
 Integer makeIntCalculation(stringstream &ss);
-string processStringInput(string input, bool isDecimal);
+string processStringInput(string input);
 bool checkElementInVector(vector<string> source, string target);
 
 const string SET_STR = "Set";
@@ -109,7 +109,7 @@ Decimal makeDecCalculation(stringstream &ss)
     string input = "", t;
     while (ss >> t)
         input += t;
-    processStringInput(input, true);
+    processStringInput(input);
     Decimal temp;
     return temp;
 }
@@ -120,7 +120,7 @@ Integer makeIntCalculation(stringstream &ss)
     string input = "", t;
     while (ss >> t)
         input += t;
-    processStringInput(input, false);
+    processStringInput(input);
     Integer temp;
     return temp;
 }
@@ -192,7 +192,7 @@ Decimal decimalDivision(const Number &num1, const Number num2)
     return Decimal(quotient, one_temp);
 }
 
-string processStringInput(string input, bool isDecimal)
+string processStringInput(string input)
 {
     vector<char> parenthesis_stack;
     vector<int> parenthesis_index;
@@ -274,21 +274,22 @@ string processStringInput(string input, bool isDecimal)
     cout << "[log]: Finished factorial.\n";
 
     // Detect Powers
-    bool run = true;
-    while (run)
+    while (true)
     {
         // At this step, we assume that there are no invalid characters
         string temp1, temp2;
         stringstream ss(input);
         getline(ss, temp1, POW_SIGN[0]);
+
         // No ^ sign was detected
         if (temp1.size() == input.size())
-            run = false;
+            break;
 
         getline(ss, temp2, POW_SIGN[0]);
 
-        string base_s = "", exponent_s = "";
+        int cut_start = temp1.size();
 
+        string base_s = "", exponent_s = "";
         // Get the base
         for (int i = temp1.size() - 1; i >= 0; i--)
         {
@@ -297,7 +298,10 @@ string processStringInput(string input, bool isDecimal)
             if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN)
                 break;
             else
+            {
                 base_s = s + base_s;
+                cut_start--;
+            }
         }
 
         // Get the exponent
@@ -306,26 +310,36 @@ string processStringInput(string input, bool isDecimal)
             string s = "";
             s += temp2[i];
             if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN)
-                break;
+            {
+                if (i == 0 && s == MIN_SIGN)
+                    exponent_s += s;
+                else
+                    break;
+            }
             else
                 exponent_s += s;
         }
 
-        cout << "The base is: " << base_s << endl;
-        cout << "The exponen: " << exponent_s << endl;
+        int cut_size = base_s.size() + exponent_s.size() + 1;
 
-        string res;
-        if (isDecimal)
-        {
-        }
-        else
-        {
-        }
+        Decimal base, exp;
+        ss.clear();
+        ss.str(base_s);
+        ss >> base;
+        ss.clear();
+        ss.str(exponent_s);
+        ss >> exp;
+        Decimal res = base.power(exp);
 
-        break;
+        input.erase(cut_start, cut_size);
+        input.insert(cut_start, res.toString());
+
+        ss.clear();
+        ss.str(input);
     }
 
     cout << "[log]: Finished power.\n";
+    cout << input << endl;
 
     string res;
     return res;

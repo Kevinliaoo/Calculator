@@ -213,7 +213,7 @@ void Decimal::divideSelf()
             if (i > 0 && temp2[i] != 0)
                 break;
         }
-        if (i == temp2.getSize())
+        if (i == temp2.getSize() && i > 1)
             return;
     }
 

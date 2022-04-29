@@ -436,7 +436,6 @@ string processStringInput(string input)
     ss.str(num_s);
     Decimal temp;
     ss >> temp;
-    num_s = "";
     if (op == PLUS_SIGN[0])
         zero = zero + temp;
     else if (op == MIN_SIGN[0])

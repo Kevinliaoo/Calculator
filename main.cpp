@@ -101,17 +101,18 @@ void printInstructions()
 // Prints the instructions menu for the user
 {
     cout << "-----------------------------------------------------------------\n";
-    cout << "Instructions: \n";
+    cout << "* Instructions: \n";
     cout << "\t1. Make operations: Insert the operation directly.\n";
     cout << "\t2. Create a variable: Set datatype varName = operation.\n";
     cout << "\t3. List all variables: Variables\n";
     cout << "\t4. Finish program: ctrl + d\n\n";
-    cout << "References:\n";
-    cout << "datatypes: Integer or Decimal.\n";
-    cout << "           variable names can only be one character.\n";
-    cout << "operators: + - * / ! ^\n";
-    cout << "\nNotes:\n";
-    cout << "All numbers are treated as Decimal.\n";
+    cout << "* References:\n";
+    cout << "\tdatatypes: Integer or Decimal.\n";
+    cout << "\toperators: + - * / ! ^\n";
+    cout << "\n* Notes:\n";
+    cout << "\t1. All numbers are treated as Decimal.\n";
+    cout << "\t2. Variable names can only contain letters.\n";
+    cout << "\t3. Everything is case sensitive.\n";
     cout << "-----------------------------------------------------------------\n\n";
 }
 

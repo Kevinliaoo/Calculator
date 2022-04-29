@@ -76,7 +76,8 @@ public:
     friend istream &operator>>(istream &strm, Decimal &num);
 
     void printFraction();
-    Decimal power(const Decimal &times);
+    Decimal power(const Decimal &times) const;
+    Decimal square() const;
     string toString() const;
     string toFractString() const;
     const Decimal simplify(const Decimal &num) const;

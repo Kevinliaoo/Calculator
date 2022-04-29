@@ -203,6 +203,20 @@ void Decimal::divideSelf()
     Number temp1 = this->numerator;
     Number temp2 = this->denominator;
 
+    {
+        // Check if the denominator is already y power of 10
+        int i = 0;
+        for (i = 0; i < temp2.getSize(); i++)
+        {
+            if (i == 0 && temp2[i] == 1)
+                continue;
+            if (i > 0 && temp2[i] != 0)
+                break;
+        }
+        if (i == temp2.getSize())
+            return;
+    }
+
     // Change all numbers to positive
     bool aa = true;
     if (temp1.getSign())
@@ -489,172 +503,98 @@ Decimal &Decimal::operator=(const Decimal &num)
     return *this;
 }
 
-Decimal Decimal::power(const Decimal &times)
+Decimal Decimal::power(const Decimal &times) const
 {
     int x[] = {0, 1, 2};
     Number zero_num(x, 1, true);
     Number one_num(x + 1, 1, true);
     Number two_num(x + 2, 1, true);
-    Number NumTimes = times.numerator;
-    Number product = one_num;
-    Number DecTimes = times.denominator;
 
-    Decimal zero(zero_num, zero_num);
+    Number product = one_num;
+
+    Decimal zero(zero_num, one_num);
     Decimal one(one_num, one_num);
     Decimal two(two_num, one_num);
     Decimal temp = one;
     Decimal compare = times;
-
-    if (times.denominator == zero_num || times.numerator == zero_num)
+    compare = compare.simplify(compare);
+    Number NumTimes = compare.numerator;
+    Number DecTimes = compare.denominator;
+    if (compare.denominator == zero_num || compare.numerator == zero_num)
     {
         temp = one;
         return temp;
     }
-    if (!times.isPositive)
+    if (!compare.isPositive)
     {
         if (!this->isPositive)
         {
             if (compare.numerator % two_num == zero_num)
             {
+                temp.denominator = this->denominator;
+                temp.numerator = this->numerator;
+                DecTimes = DecTimes / two_num;
                 while (1)
                 {
-                    temp.denominator = temp.denominator * this->numerator;
-                    temp.numerator = temp.numerator * this->denominator;
+                    if (DecTimes == zero_num)
+                        break;
+                    temp = temp.square();
+                    DecTimes = DecTimes - one_num;
+                }
+                Decimal take = temp;
+                temp = one;
+                while (1)
+                {
+                    temp.denominator = temp.denominator * take.numerator;
+                    temp.numerator = temp.numerator * take.denominator;
                     NumTimes = NumTimes - one_num;
                     if (NumTimes == zero_num)
                         break;
                 }
-                while (1)
-                {
-                    NumTimes = NumTimes + one_num;
-                    DecTimes = times.denominator;
-                    product = one_num;
-                    while (1)
-                    {
-                        product = product * NumTimes;
-                        DecTimes = DecTimes - one_num;
-                        if (DecTimes == zero_num)
-                            break;
-                    }
-                    if (temp.numerator == product)
-                    {
-                        temp.numerator = NumTimes;
-                        break;
-                    }
-                }
-                NumTimes = zero_num;
-                while (1)
-                {
-                    NumTimes = NumTimes + one_num;
-                    DecTimes = times.denominator;
-                    product = one_num;
-                    while (1)
-                    {
-                        product = product * NumTimes;
-                        DecTimes = DecTimes - one_num;
-                        if (DecTimes == zero_num)
-                            break;
-                    }
-                    if (temp.denominator == product)
-                    {
-                        temp.denominator = NumTimes;
-                        break;
-                    }
-                }
                 return temp;
             }
             temp.isPositive = false;
+            temp.denominator = this->denominator;
+            temp.numerator = this->numerator;
+            DecTimes = DecTimes / two_num;
             while (1)
             {
-                temp.denominator = temp.denominator * this->numerator;
-                temp.numerator = temp.numerator * this->denominator;
+                if (DecTimes == zero_num)
+                    break;
+                temp = temp.square();
+                DecTimes = DecTimes - one_num;
+            }
+            Decimal take = temp;
+            temp = one;
+            while (1)
+            {
+                temp.denominator = temp.denominator * take.numerator;
+                temp.numerator = temp.numerator * take.denominator;
                 NumTimes = NumTimes - one_num;
                 if (NumTimes == zero_num)
                     break;
             }
-            while (1)
-            {
-                NumTimes = NumTimes + one_num;
-                DecTimes = times.denominator;
-                product = one_num;
-                while (1)
-                {
-                    product = product * NumTimes;
-                    DecTimes = DecTimes - one_num;
-                    if (DecTimes == zero_num)
-                        break;
-                }
-                if (temp.numerator == product)
-                {
-                    temp.numerator = NumTimes;
-                    break;
-                }
-            }
-            NumTimes = zero_num;
-            while (1)
-            {
-                NumTimes = NumTimes + one_num;
-                DecTimes = times.denominator;
-                product = one_num;
-                while (1)
-                {
-                    product = product * NumTimes;
-                    DecTimes = DecTimes - one_num;
-                    if (DecTimes == zero_num)
-                        break;
-                }
-                if (temp.denominator == product)
-                {
-                    temp.denominator = NumTimes;
-                    break;
-                }
-            }
             return temp;
         }
+        temp.denominator = this->denominator;
+        temp.numerator = this->numerator;
+        DecTimes = DecTimes / two_num;
         while (1)
         {
-            temp.denominator = temp.denominator * this->numerator;
-            temp.numerator = temp.numerator * this->denominator;
+            if (DecTimes == zero_num)
+                break;
+            temp = temp.square();
+            DecTimes = DecTimes - one_num;
+        }
+        Decimal take = temp;
+        temp = one;
+        while (1)
+        {
+            temp.denominator = temp.denominator * take.numerator;
+            temp.numerator = temp.numerator * take.denominator;
             NumTimes = NumTimes - one_num;
             if (NumTimes == zero_num)
                 break;
-        }
-        while (1)
-        {
-            NumTimes = NumTimes + one_num;
-            DecTimes = times.denominator;
-            product = one_num;
-            while (1)
-            {
-                product = product * NumTimes;
-                DecTimes = DecTimes - one_num;
-                if (DecTimes == zero_num)
-                    break;
-            }
-            if (temp.numerator == product)
-            {
-                temp.numerator = NumTimes;
-                break;
-            }
-        }
-        NumTimes = zero_num;
-        while (1)
-        {
-            NumTimes = NumTimes + one_num;
-            DecTimes = times.denominator;
-            product = one_num;
-            while (1)
-            {
-                product = product * NumTimes;
-                DecTimes = DecTimes - one_num;
-                if (DecTimes == zero_num)
-                    break;
-            }
-            if (temp.denominator == product)
-            {
-                temp.denominator = NumTimes;
-                break;
-            }
         }
         return temp;
     }
@@ -670,42 +610,13 @@ Decimal Decimal::power(const Decimal &times)
                 if (NumTimes == zero_num)
                     break;
             }
+            DecTimes = DecTimes / two_num;
             while (1)
             {
-                NumTimes = NumTimes + one_num;
-                DecTimes = times.denominator;
-                product = one_num;
-                while (1)
-                {
-                    product = product * NumTimes;
-                    DecTimes = DecTimes - one_num;
-                    if (DecTimes == zero_num)
-                        break;
-                }
-                if (temp.numerator == product)
-                {
-                    temp.numerator = NumTimes;
+                if (DecTimes == zero_num)
                     break;
-                }
-            }
-            NumTimes = zero_num;
-            while (1)
-            {
-                NumTimes = NumTimes + one_num;
-                DecTimes = times.denominator;
-                product = one_num;
-                while (1)
-                {
-                    product = product * NumTimes;
-                    DecTimes = DecTimes - one_num;
-                    if (DecTimes == zero_num)
-                        break;
-                }
-                if (temp.denominator == product)
-                {
-                    temp.denominator = NumTimes;
-                    break;
-                }
+                temp = temp.square();
+                DecTimes = DecTimes - one_num;
             }
             return temp;
         }
@@ -718,42 +629,13 @@ Decimal Decimal::power(const Decimal &times)
             if (NumTimes == zero_num)
                 break;
         }
+        DecTimes = DecTimes / two_num;
         while (1)
         {
-            NumTimes = NumTimes + one_num;
-            DecTimes = times.denominator;
-            product = one_num;
-            while (1)
-            {
-                product = product * NumTimes;
-                DecTimes = DecTimes - one_num;
-                if (DecTimes == zero_num)
-                    break;
-            }
-            if (temp.numerator == product)
-            {
-                temp.numerator = NumTimes;
+            if (DecTimes == zero_num)
                 break;
-            }
-        }
-        NumTimes = zero_num;
-        while (1)
-        {
-            NumTimes = NumTimes + one_num;
-            DecTimes = times.denominator;
-            product = one_num;
-            while (1)
-            {
-                product = product * NumTimes;
-                DecTimes = DecTimes - one_num;
-                if (DecTimes == zero_num)
-                    break;
-            }
-            if (temp.denominator == product)
-            {
-                temp.denominator = NumTimes;
-                break;
-            }
+            temp = temp.square();
+            DecTimes = DecTimes - one_num;
         }
         return temp;
     }
@@ -765,42 +647,321 @@ Decimal Decimal::power(const Decimal &times)
         if (NumTimes == zero_num)
             break;
     }
+    DecTimes = DecTimes / two_num;
     while (1)
     {
-        NumTimes = NumTimes + one_num;
-        DecTimes = times.denominator;
-        product = one_num;
-        while (1)
-        {
-            product = product * NumTimes;
-            DecTimes = DecTimes - one_num;
-            if (DecTimes == zero_num)
-                break;
-        }
-        if (temp.numerator == product)
-        {
-            temp.numerator = NumTimes;
+        if (DecTimes == zero_num)
             break;
-        }
-    }
-    NumTimes = zero_num;
-    while (1)
-    {
-        NumTimes = NumTimes + one_num;
-        DecTimes = times.denominator;
-        product = one_num;
-        while (1)
-        {
-            product = product * NumTimes;
-            DecTimes = DecTimes - one_num;
-            if (DecTimes == zero_num)
-                break;
-        }
-        if (temp.denominator == product)
-        {
-            temp.denominator = NumTimes;
-            break;
-        }
+        temp = temp.square();
+        DecTimes = DecTimes - one_num;
     }
     return temp;
+}
+
+Decimal Decimal::square() const
+{
+    int x[] = {0, 1, 2};
+    int y[] = {0, 2};
+    int z[] = {0, 0, 1};
+    Number int_zero(x, 1, true);
+    Number int_one(x + 1, 1, true);
+    if (!this->isPositive)
+    {
+        cout << "[Error]: Negative number does not admit square root.\n";
+        return int_zero;
+    }
+    if (*this == int_zero)
+        return int_zero;
+    Number int_100(z, 3, true);
+    Number int_ten(x, 2, true);
+    Number int_twenty(y, 2, true);
+    Decimal This = *this;
+    This.divideSelf();
+    int decSize = This.denominator.getSize();
+    int numSize = This.numerator.getSize();
+    int Int = numSize - decSize + 1;
+    vector<int> temp_num;
+
+    if (Int % 2 == 1)
+    {
+        Number remainder(x, 1, true);
+        int time = 0;
+
+        while (time * 2 < Int)
+        {
+            Number test(x + 1, 1, true);
+            Number compare(x + 1, 1, true);
+            int temp[2];
+            if (time != 0)
+            {
+                temp[0] = This.numerator[time * 2];
+                temp[1] = This.numerator[time * 2 - 1];
+            }
+            else
+            {
+                temp[0] = This.numerator[0];
+                temp[1] = 0;
+            }
+            Number t(temp, 2, true);
+            Number now = remainder + t;
+            if (now == int_zero)
+                temp_num.push_back(0);
+            else
+            {
+                int *ptr = new int[temp_num.size()];
+                for (int i = 0; i < temp_num.size(); i++)
+                {
+                    ptr[i] = temp_num[temp_num.size() - i - 1];
+                }
+                while (now > compare)
+                {
+                    compare = int_zero;
+                    if (temp_num.size() > 0)
+                    {
+                        Number product(ptr, temp_num.size(), true);
+                        compare = product * int_twenty;
+                    }
+                    compare = compare + test;
+                    compare = compare * test;
+                    Number r = now - compare;
+                    if (r.getSign())
+                        remainder = r;
+                    test = test + int_one;
+                }
+                if (compare == now)
+                {
+                    remainder = int_zero;
+                    test = test - int_one;
+                    temp_num.push_back(test[0]);
+                }
+                else
+                {
+                    test = test - int_one;
+                    test = test - int_one;
+                    temp_num.push_back(test[0]);
+                }
+            }
+            remainder = remainder * int_100;
+            time++;
+        }
+        int diSize = numSize - Int;
+        int a = time;
+        time = 0;
+        int count = 0;
+        vector<int> return_dec;
+        if (diSize > 0)
+        {
+            while (time < 100)
+            {
+                Number test(x + 1, 1, true);
+                Number compare(x + 1, 1, true);
+                int temp[2];
+                Number now = remainder;
+                if ((a - 1) * 2 + 2 + time * 2 < numSize)
+                    temp[0] = This.numerator[(a - 1) * 2 + 2 + time * 2];
+                else
+                    temp[0] = 0;
+                if ((a - 1) * 2 + 1 + time * 2 < numSize)
+                    temp[1] = This.numerator[(a - 1) * 2 + 1 + time * 2];
+                if ((a - 1) * 2 + 1 + time * 2 < numSize || (a - 1) * 2 + 2 + time * 2 < numSize)
+                {
+                    Number t(temp, 2, true);
+                    now = now + t;
+                }
+
+                if (now == int_zero)
+                    temp_num.push_back(0);
+                else
+                {
+                    int *ptr = new int[temp_num.size()];
+                    for (int i = 0; i < temp_num.size(); i++)
+                    {
+                        ptr[i] = temp_num[temp_num.size() - i - 1];
+                    }
+                    while (now > compare)
+                    {
+                        compare = int_zero;
+                        if (temp_num.size() > 0)
+                        {
+                            Number product(ptr, temp_num.size(), true);
+                            compare = product * int_twenty;
+                        }
+                        compare = compare + test;
+                        compare = compare * test;
+                        Number r = now - compare;
+                        if (r.getSign())
+                            remainder = r;
+                        test = test + int_one;
+                    }
+                    if (compare == now)
+                    {
+                        remainder = int_zero;
+                        test = test - int_one;
+                        temp_num.push_back(test[0]);
+                    }
+                    else
+                    {
+                        test = test - int_one;
+                        test = test - int_one;
+                        temp_num.push_back(test[0]);
+                    }
+                }
+                remainder = remainder * int_100;
+                time++;
+            }
+        }
+        int *out_num = new int[temp_num.size()];
+        for (int i = 0; i < temp_num.size(); i++)
+        {
+            out_num[i] = temp_num[temp_num.size() - i - 1];
+        }
+        Number new_num(out_num, temp_num.size(), true);
+        Number dec(x + 1, 1, true);
+        int Tsize = temp_num.size();
+        if (Tsize - a > 0)
+        {
+            for (int i = 0; i < Tsize - a; i++)
+            {
+                dec = dec * int_ten;
+            }
+        }
+        return Decimal(new_num, dec);
+    }
+    else
+    {
+        Number remainder(x, 1, true);
+        int time = 0;
+
+        while (time * 2 < Int)
+        {
+            Number test(x + 1, 1, true);
+            Number compare(x + 1, 1, true);
+            int temp[2];
+            temp[0] = This.numerator[time * 2 + 1];
+            temp[1] = This.numerator[time * 2];
+            Number t(temp, 2, true);
+            Number now = remainder + t;
+            if (now == int_zero)
+                temp_num.push_back(0);
+            else
+            {
+                int *ptr = new int[temp_num.size()];
+                for (int i = 0; i < temp_num.size(); i++)
+                {
+                    ptr[i] = temp_num[temp_num.size() - i - 1];
+                }
+                while (now > compare)
+                {
+                    compare = int_zero;
+                    if (temp_num.size() > 0)
+                    {
+                        Number product(ptr, temp_num.size(), true);
+                        compare = product * int_twenty;
+                    }
+                    compare = compare + test;
+                    compare = compare * test;
+                    Number r = now - compare;
+                    if (r.getSign())
+                        remainder = r;
+                    test = test + int_one;
+                }
+                if (compare == now)
+                {
+                    remainder = int_zero;
+                    test = test - int_one;
+                    temp_num.push_back(test[0]);
+                }
+                else
+                {
+                    test = test - int_one;
+                    test = test - int_one;
+                    temp_num.push_back(test[0]);
+                }
+            }
+            remainder = remainder * int_100;
+            time++;
+        }
+        int diSize = numSize - Int;
+        int a = time;
+        time = 0;
+        int count = 0;
+        vector<int> return_dec;
+        if (diSize > 0)
+        {
+            while (time < 100)
+            {
+                Number test(x + 1, 1, true);
+                Number compare(x + 1, 1, true);
+                int temp[2];
+                Number now = remainder;
+                if (a * 2 + time * 2 + 1 < numSize)
+                    temp[0] = This.numerator[a * 2 + time * 2 + 1];
+                else
+                    temp[0] = 0;
+                if (a * 2 + time * 2 < numSize)
+                    temp[1] = This.numerator[a * 2 + time * 2];
+                if (a * 2 + time * 2 + 1 < numSize || a * 2 + time * 2 < numSize)
+                {
+                    Number t(temp, 2, true);
+                    now = now + t;
+                }
+
+                if (now == int_zero)
+                    temp_num.push_back(0);
+                else
+                {
+                    int *ptr = new int[temp_num.size()];
+                    for (int i = 0; i < temp_num.size(); i++)
+                    {
+                        ptr[i] = temp_num[temp_num.size() - i - 1];
+                    }
+                    while (now > compare)
+                    {
+                        compare = int_zero;
+                        if (temp_num.size() > 0)
+                        {
+                            Number product(ptr, temp_num.size(), true);
+                            compare = product * int_twenty;
+                        }
+                        compare = compare + test;
+                        compare = compare * test;
+                        Number r = now - compare;
+                        if (r.getSign())
+                            remainder = now - compare;
+                        test = test + int_one;
+                    }
+                    if (compare == now)
+                    {
+                        remainder = int_zero;
+                        test = test - int_one;
+                        temp_num.push_back(test[0]);
+                    }
+                    else
+                    {
+                        test = test - int_one;
+                        test = test - int_one;
+                        temp_num.push_back(test[0]);
+                    }
+                }
+                remainder = remainder * int_100;
+                time++;
+            }
+        }
+        int *out_num = new int[temp_num.size()];
+        for (int i = 0; i < temp_num.size(); i++)
+        {
+            out_num[i] = temp_num[temp_num.size() - i - 1];
+        }
+        Number new_num(out_num, temp_num.size(), true);
+        Number dec(x + 1, 1, true);
+        int Tsize = temp_num.size();
+        if (Tsize - a > 0)
+        {
+            for (int i = 0; i < Tsize - a; i++)
+            {
+                dec = dec * int_ten;
+            }
+        }
+        return Decimal(new_num, dec);
+    }
 }

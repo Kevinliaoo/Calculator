@@ -681,7 +681,90 @@ Decimal Decimal::square() const
     int numSize = This.numerator.getSize();
     int Int = numSize - decSize + 1;
     vector<int> temp_num;
+    if (Int < 0)
+    {
+        Number remainder(x, 1, true);
+        int time = 0;
+        while (time < 100)
+        {
+            Number test(x + 1, 1, true);
+            Number compare(x + 1, 1, true);
+            int temp[2];
+            Number now = remainder;
+            if (time * 2 + 1 + Int < numSize && time * 2 + 1 + Int >= 0)
+                temp[0] = This.numerator[time * 2 + 1 + Int];
+            else
+                temp[0] = 0;
+            if (time * 2 + Int < numSize && time * 2 + Int >= 0)
+                temp[1] = This.numerator[time * 2 + Int];
+            else
+                temp[1] = 0;
+            if ((time * 2 + Int < numSize && time * 2 + Int >= 0) || (time * 2 + 1 + Int < numSize && time * 2 + 1 + Int >= 0))
+            {
+                Number t(temp, 2, true);
+                now = now + t;
+            }
 
+            if (now == int_zero)
+                temp_num.push_back(0);
+            else
+            {
+                int *ptr = new int[temp_num.size()];
+                for (int i = 0; i < temp_num.size(); i++)
+                {
+                    ptr[i] = temp_num[temp_num.size() - i - 1];
+                }
+                remainder = now;
+                while (now > compare)
+                {
+                    compare = int_zero;
+                    if (temp_num.size() > 0)
+                    {
+                        Number product(ptr, temp_num.size(), true);
+                        compare = product * int_twenty;
+                    }
+                    compare = compare + test;
+                    compare = compare * test;
+                    Number r = now - compare;
+                    if (r.getSign())
+                        remainder = r;
+                    test = test + int_one;
+                }
+                if (now == int_one)
+                {
+                    remainder = int_zero;
+                    temp_num.push_back(test[0]);
+                }
+                else if (compare == now)
+                {
+                    remainder = int_zero;
+                    test = test - int_one;
+                    temp_num.push_back(test[0]);
+                }
+                else
+                {
+                    test = test - int_one;
+                    test = test - int_one;
+                    temp_num.push_back(test[0]);
+                }
+            }
+            remainder = remainder * int_100;
+            time++;
+        }
+
+        int *out_num = new int[temp_num.size()];
+        for (int i = 0; i < temp_num.size(); i++)
+        {
+            out_num[i] = temp_num[temp_num.size() - i - 1];
+        }
+        Number new_num(out_num, temp_num.size(), true);
+        Number dec(x + 1, 1, true);
+        for (int i = 0; i < 100; i++)
+        {
+            dec = dec * int_ten;
+        }
+        return Decimal(new_num, dec);
+    }
     if (Int % 2 == 1)
     {
         Number remainder(x, 1, true);
@@ -713,6 +796,7 @@ Decimal Decimal::square() const
                 {
                     ptr[i] = temp_num[temp_num.size() - i - 1];
                 }
+                remainder = now;
                 while (now > compare)
                 {
                     compare = int_zero;
@@ -728,7 +812,12 @@ Decimal Decimal::square() const
                         remainder = r;
                     test = test + int_one;
                 }
-                if (compare == now)
+                if (now == int_one)
+                {
+                    remainder = int_zero;
+                    temp_num.push_back(test[0]);
+                }
+                else if (compare == now)
                 {
                     remainder = int_zero;
                     test = test - int_one;
@@ -744,72 +833,76 @@ Decimal Decimal::square() const
             remainder = remainder * int_100;
             time++;
         }
-        int diSize = numSize - Int;
         int a = time;
         time = 0;
         int count = 0;
         vector<int> return_dec;
-        if (diSize > 0)
-        {
-            while (time < 100)
-            {
-                Number test(x + 1, 1, true);
-                Number compare(x + 1, 1, true);
-                int temp[2];
-                Number now = remainder;
-                if ((a - 1) * 2 + 2 + time * 2 < numSize)
-                    temp[0] = This.numerator[(a - 1) * 2 + 2 + time * 2];
-                else
-                    temp[0] = 0;
-                if ((a - 1) * 2 + 1 + time * 2 < numSize)
-                    temp[1] = This.numerator[(a - 1) * 2 + 1 + time * 2];
-                if ((a - 1) * 2 + 1 + time * 2 < numSize || (a - 1) * 2 + 2 + time * 2 < numSize)
-                {
-                    Number t(temp, 2, true);
-                    now = now + t;
-                }
 
-                if (now == int_zero)
-                    temp_num.push_back(0);
+        while (time < 100)
+        {
+            Number test(x + 1, 1, true);
+            Number compare(x + 1, 1, true);
+            int temp[2];
+            Number now = remainder;
+            if ((a - 1) * 2 + 2 + time * 2 < numSize)
+                temp[0] = This.numerator[(a - 1) * 2 + 2 + time * 2];
+            else
+                temp[0] = 0;
+            if ((a - 1) * 2 + 1 + time * 2 < numSize)
+                temp[1] = This.numerator[(a - 1) * 2 + 1 + time * 2];
+            if ((a - 1) * 2 + 1 + time * 2 < numSize || (a - 1) * 2 + 2 + time * 2 < numSize)
+            {
+                Number t(temp, 2, true);
+                now = now + t;
+            }
+
+            if (now == int_zero)
+                temp_num.push_back(0);
+            else
+            {
+                int *ptr = new int[temp_num.size()];
+                for (int i = 0; i < temp_num.size(); i++)
+                {
+                    ptr[i] = temp_num[temp_num.size() - i - 1];
+                }
+                remainder = now;
+                while (now > compare)
+                {
+                    compare = int_zero;
+                    if (temp_num.size() > 0)
+                    {
+                        Number product(ptr, temp_num.size(), true);
+                        compare = product * int_twenty;
+                    }
+                    compare = compare + test;
+                    compare = compare * test;
+                    Number r = now - compare;
+                    if (r.getSign())
+                        remainder = r;
+                    test = test + int_one;
+                }
+                if (now == int_one)
+                {
+                    remainder = int_zero;
+                    temp_num.push_back(test[0]);
+                }
+                else if (compare == now)
+                {
+                    remainder = int_zero;
+                    test = test - int_one;
+                    temp_num.push_back(test[0]);
+                }
                 else
                 {
-                    int *ptr = new int[temp_num.size()];
-                    for (int i = 0; i < temp_num.size(); i++)
-                    {
-                        ptr[i] = temp_num[temp_num.size() - i - 1];
-                    }
-                    while (now > compare)
-                    {
-                        compare = int_zero;
-                        if (temp_num.size() > 0)
-                        {
-                            Number product(ptr, temp_num.size(), true);
-                            compare = product * int_twenty;
-                        }
-                        compare = compare + test;
-                        compare = compare * test;
-                        Number r = now - compare;
-                        if (r.getSign())
-                            remainder = r;
-                        test = test + int_one;
-                    }
-                    if (compare == now)
-                    {
-                        remainder = int_zero;
-                        test = test - int_one;
-                        temp_num.push_back(test[0]);
-                    }
-                    else
-                    {
-                        test = test - int_one;
-                        test = test - int_one;
-                        temp_num.push_back(test[0]);
-                    }
+                    test = test - int_one;
+                    test = test - int_one;
+                    temp_num.push_back(test[0]);
                 }
-                remainder = remainder * int_100;
-                time++;
             }
+            remainder = remainder * int_100;
+            time++;
         }
+
         int *out_num = new int[temp_num.size()];
         for (int i = 0; i < temp_num.size(); i++)
         {
@@ -850,6 +943,7 @@ Decimal Decimal::square() const
                 {
                     ptr[i] = temp_num[temp_num.size() - i - 1];
                 }
+                remainder = now;
                 while (now > compare)
                 {
                     compare = int_zero;
@@ -865,7 +959,12 @@ Decimal Decimal::square() const
                         remainder = r;
                     test = test + int_one;
                 }
-                if (compare == now)
+                if (now == int_one)
+                {
+                    remainder = int_zero;
+                    temp_num.push_back(test[0]);
+                }
+                else if (compare == now)
                 {
                     remainder = int_zero;
                     test = test - int_one;
@@ -886,67 +985,72 @@ Decimal Decimal::square() const
         time = 0;
         int count = 0;
         vector<int> return_dec;
-        if (diSize > 0)
-        {
-            while (time < 100)
-            {
-                Number test(x + 1, 1, true);
-                Number compare(x + 1, 1, true);
-                int temp[2];
-                Number now = remainder;
-                if (a * 2 + time * 2 + 1 < numSize)
-                    temp[0] = This.numerator[a * 2 + time * 2 + 1];
-                else
-                    temp[0] = 0;
-                if (a * 2 + time * 2 < numSize)
-                    temp[1] = This.numerator[a * 2 + time * 2];
-                if (a * 2 + time * 2 + 1 < numSize || a * 2 + time * 2 < numSize)
-                {
-                    Number t(temp, 2, true);
-                    now = now + t;
-                }
 
-                if (now == int_zero)
-                    temp_num.push_back(0);
+        while (time < 100)
+        {
+            Number test(x + 1, 1, true);
+            Number compare(x + 1, 1, true);
+            int temp[2];
+            Number now = remainder;
+            if (a * 2 + time * 2 + 1 < numSize)
+                temp[0] = This.numerator[a * 2 + time * 2 + 1];
+            else
+                temp[0] = 0;
+            if (a * 2 + time * 2 < numSize)
+                temp[1] = This.numerator[a * 2 + time * 2];
+            if (a * 2 + time * 2 + 1 < numSize || a * 2 + time * 2 < numSize)
+            {
+                Number t(temp, 2, true);
+                now = now + t;
+            }
+
+            if (now == int_zero)
+                temp_num.push_back(0);
+            else
+            {
+                int *ptr = new int[temp_num.size()];
+                for (int i = 0; i < temp_num.size(); i++)
+                {
+                    ptr[i] = temp_num[temp_num.size() - i - 1];
+                }
+                remainder = now;
+                while (now > compare)
+                {
+                    compare = int_zero;
+                    if (temp_num.size() > 0)
+                    {
+                        Number product(ptr, temp_num.size(), true);
+                        compare = product * int_twenty;
+                    }
+                    compare = compare + test;
+                    compare = compare * test;
+                    Number r = now - compare;
+                    if (r.getSign())
+                        remainder = now - compare;
+                    test = test + int_one;
+                }
+                if (now == int_one)
+                {
+                    remainder = int_zero;
+                    temp_num.push_back(test[0]);
+                }
+                else if (compare == now)
+                {
+                    remainder = int_zero;
+                    test = test - int_one;
+                    temp_num.push_back(test[0]);
+                }
                 else
                 {
-                    int *ptr = new int[temp_num.size()];
-                    for (int i = 0; i < temp_num.size(); i++)
-                    {
-                        ptr[i] = temp_num[temp_num.size() - i - 1];
-                    }
-                    while (now > compare)
-                    {
-                        compare = int_zero;
-                        if (temp_num.size() > 0)
-                        {
-                            Number product(ptr, temp_num.size(), true);
-                            compare = product * int_twenty;
-                        }
-                        compare = compare + test;
-                        compare = compare * test;
-                        Number r = now - compare;
-                        if (r.getSign())
-                            remainder = now - compare;
-                        test = test + int_one;
-                    }
-                    if (compare == now)
-                    {
-                        remainder = int_zero;
-                        test = test - int_one;
-                        temp_num.push_back(test[0]);
-                    }
-                    else
-                    {
-                        test = test - int_one;
-                        test = test - int_one;
-                        temp_num.push_back(test[0]);
-                    }
+                    test = test - int_one;
+                    test = test - int_one;
+                    temp_num.push_back(test[0]);
                 }
-                remainder = remainder * int_100;
-                time++;
             }
+            remainder = remainder * int_100;
+            time++;
         }
+
         int *out_num = new int[temp_num.size()];
         for (int i = 0; i < temp_num.size(); i++)
         {

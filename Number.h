@@ -36,7 +36,7 @@ public:
     bool isEqualZero() const;
     void insertFront(int d);
     int getSize();
-    virtual string toString();
+    virtual string toString() const;
 
     friend Number getGCD(const Number &num1, const Number &num2);
     friend Number getLCM(const Number &num1, const Number &num2);
@@ -51,7 +51,6 @@ class Decimal
 {
 private:
     void divideSelf(); // Copy function of decimalDivision
-    void printFraction();
     bool isInteger();
 
 protected:
@@ -76,9 +75,13 @@ public:
     friend ostream &operator<<(ostream &strm, const Decimal &num);
     friend istream &operator>>(istream &strm, Decimal &num);
 
+    void printFraction();
     Decimal power(const Decimal &times);
-    string toString();
+    string toString() const;
+    string toFractString() const;
     const Decimal simplify(const Decimal &num) const;
+
+    static char fraction_delimiter;
 };
 #endif
 

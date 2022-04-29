@@ -1,9 +1,13 @@
 #include <iostream>
+#include <string>
+#include <sstream>
 #include "Number.h"
 
 using namespace std;
 
 /* ********** DECIMAL ********** */
+
+char Decimal::fraction_delimiter = '#';
 
 Decimal::Decimal()
 {
@@ -120,7 +124,7 @@ const Decimal Decimal::operator/(const Decimal &num) const
     b = simplify(b);
     if (b.denominator == int_zero || b.numerator == int_zero)
     {
-        cout << "Error: Can not divide by zero\n";
+        cout << "[Error]: Can not divide by zero (at Decimal::operator/).\n";
         return zero;
     }
     if (a.denominator == int_zero || a.numerator == int_zero)
@@ -136,6 +140,10 @@ const Decimal Decimal::operator/(const Decimal &num) const
 
     Number new_den = a.denominator * b.numerator;
     Number new_num = a.numerator * b.denominator;
+
+    if (!isPos)
+        new_num.changeSign();
+
     return Decimal(new_num, new_den);
 }
 
@@ -249,7 +257,21 @@ void Decimal::divideSelf()
     this->denominator = one_temp;
 }
 
-string Decimal::toString()
+string Decimal::toFractString() const
+// This function returns a string in fraction mode
+// # -> Separator between numerator and denominator
+{
+    string res;
+    if (!this->isPositive)
+        res += "-";
+    res += this->numerator.toString();
+    res += Decimal::fraction_delimiter;
+    res += this->denominator.toString();
+
+    return res;
+}
+
+string Decimal::toString() const
 {
     string res;
     Decimal temp = *this;
@@ -321,6 +343,9 @@ ostream &operator<<(ostream &strm, const Decimal &num)
 }
 
 istream &operator>>(istream &strm, Decimal &num)
+// There are two input mode for storing a Decimal
+// Mode 1: Using the . to separate Integer part with Decimal part
+// Mode 2: Using the # to separate between numerator and denominator
 {
     int a[1] = {1};
     int b[2] = {0, 1};
@@ -331,83 +356,121 @@ istream &operator>>(istream &strm, Decimal &num)
     strm >> numberString;
     int size = numberString.size();
 
-    vector<int> numDigits;
-    bool isPositive = true;
-    int decimalPlaces = 0;
-    bool decimalActivated = false;
-
-    for (int i = size - 1; i >= 0; i--)
+    // Determines the input mode
+    bool hasFractDel = false;
+    for (int i = 0; i < size; i++)
     {
-        char currentDigit = numberString[i];
-        if (i == 0)
+        if (numberString[i] == Decimal::fraction_delimiter)
         {
-            if (currentDigit == '-')
-            {
-                isPositive = false;
-                continue;
-            }
+            hasFractDel = true;
+            break;
         }
+    }
 
-        if (currentDigit == '.')
+    // Dot mode
+    if (!hasFractDel)
+    {
+        vector<int> numDigits;
+        bool isPositive = true;
+        int decimalPlaces = 0;
+        bool decimalActivated = false;
+
+        for (int i = size - 1; i >= 0; i--)
         {
-            if (decimalActivated == false)
+            char currentDigit = numberString[i];
+            if (i == 0)
             {
-                decimalActivated = true;
-                continue;
+                if (currentDigit == '-')
+                {
+                    isPositive = false;
+                    continue;
+                }
             }
-            else
+
+            if (currentDigit == '.')
             {
-                cout << "Error: Invalid input\n";
+                if (decimalActivated == false)
+                {
+                    decimalActivated = true;
+                    continue;
+                }
+                else
+                {
+                    cout << "[Error]: Invalid input (at Decimal::operator>>).\n";
+                    return strm;
+                }
+            }
+
+            int intDigit = currentDigit - '0';
+            if (intDigit < 0 || intDigit > 9)
+            {
+                cout << "[Error]: Invalid input (at Decimal::operator>>).\n";
                 return strm;
             }
+
+            numDigits.push_back(intDigit);
+            if (decimalActivated)
+                decimalPlaces++;
         }
 
-        int intDigit = currentDigit - '0';
-        if (intDigit < 0 || intDigit > 9)
+        decimalPlaces = numDigits.size() - decimalPlaces;
+        if (!decimalActivated)
+            decimalPlaces = 0;
+
+        for (int i = 0; i < decimalPlaces; i++)
+            one = one * ten;
+
+        for (int i = numDigits.size() - 1; i >= 0; i--)
         {
-            cout << "Error: Invalid input\n";
-            return strm;
-        }
-
-        numDigits.push_back(intDigit);
-        if (decimalActivated)
-            decimalPlaces++;
-    }
-
-    decimalPlaces = numDigits.size() - decimalPlaces;
-    if (!decimalActivated)
-        decimalPlaces = 0;
-
-    for (int i = 0; i < decimalPlaces; i++)
-        one = one * ten;
-
-    for (int i = numDigits.size() - 1; i >= 0; i--)
-    {
-        if (numDigits[i] != 0)
-            break;
-        numDigits.pop_back();
-    }
-
-    if (numDigits.size() == 0)
-        numDigits.push_back(0);
-
-    int *c = &numDigits[0];
-    Number numerator(c, numDigits.size(), isPositive);
-
-    // Simplify zeros
-    if (decimalActivated)
-    {
-        for (int i = numerator.getSize() - 1; i >= 0; i--)
-        {
-            if (numerator[i] != 0)
+            if (numDigits[i] != 0)
                 break;
-            numerator = numerator / ten;
-            one = one / ten;
+            numDigits.pop_back();
         }
-    }
 
-    Decimal temp(numerator, one);
-    num = temp;
+        if (numDigits.size() == 0)
+            numDigits.push_back(0);
+
+        int *c = &numDigits[0];
+        Number numerator(c, numDigits.size(), isPositive);
+
+        // Simplify zeros
+        if (decimalActivated)
+        {
+            for (int i = numerator.getSize() - 1; i >= 0; i--)
+            {
+                if (numerator[i] != 0)
+                    break;
+                numerator = numerator / ten;
+                one = one / ten;
+            }
+        }
+
+        Decimal temp(numerator, one);
+        num = temp;
+    }
+    // Fraction mode
+    else
+    {
+        string nume, den;
+        stringstream ss(numberString);
+
+        getline(ss, nume, Decimal::fraction_delimiter);
+        getline(ss, den);
+
+        // cout << "[log]: Numerator: " << nume << endl;
+        // cout << "[log]: Denominator: " << den << endl;
+
+        Number numerator, denominator;
+        ss.clear();
+        ss.str(nume);
+        ss >> numerator;
+        ss.clear();
+        ss.str(den);
+        ss >> denominator;
+
+        Decimal res(numerator, denominator);
+        num = res;
+    }
 
     return strm;
 }

@@ -1,3 +1,4 @@
+#include <string>
 #include "Number.h"
 
 Integer::Integer(const Number &num) : Decimal(num)

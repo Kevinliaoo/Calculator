@@ -75,7 +75,7 @@ int main()
                 variables.insert(pair<string, Decimal>(varName, makeDecCalculation(ss)));
             else
             {
-                cout << "Error: Invalid datatype";
+                cout << "[Error]: Invalid datatype (at main.cpp).";
                 continue;
             }
         }
@@ -228,7 +228,7 @@ string processStringInput(string input)
             if (parenthesis_stack.size() == 0)
             // A close parenthesis detected without previously opening
             {
-                cout << "Error: Invalid input (parenthesis does not match).\n";
+                cout << "[Error]: Invalid input (parenthesis does not match).\n";
                 return "";
             }
             // Take what is inside the parenthesis
@@ -257,12 +257,14 @@ string processStringInput(string input)
             bool factCalculated = false;
             string s = "";
             s += input[i];
+            string del = "";
+            del += Decimal::fraction_delimiter;
             if (!checkElementInVector(SPECIAL_SYMBOLS, s))
             {
-                cout << "Error: Invalid input (invalid characters detected).\n";
+                cout << "[Error]: Invalid input (invalid characters detected).\n";
                 return "";
             }
-            else if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN)
+            else if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN && s != del)
             {
                 if (s == FACT_SIGN)
                 {
@@ -296,16 +298,16 @@ string processStringInput(string input)
     // cout << "[log]: Finished power.\n";
     // cout << input << endl;
 
-    // Detect Multiplication
-    input = solveOperation(input, MULT_SIGN);
-
-    // cout << "[log]: Finished multiplication.\n";
-    // cout << input << endl;
-
     // Detect Division
     input = solveOperation(input, DIV_SIGN);
 
     // cout << "[log]: Finished division.\n";
+    // cout << input << endl;
+
+    // Detect Multiplication
+    input = solveOperation(input, MULT_SIGN);
+
+    // cout << "[log]: Finished multiplication.\n";
     // cout << input << endl;
 
     // Addition and subtraction
@@ -316,8 +318,12 @@ string processStringInput(string input)
     for (int i = 0; i < input.size(); i++)
     {
         char current = input[i];
+        bool isDigit = current - '0' >= 0 && current - '0' <= 9;
+        bool temp = current == Decimal::fraction_delimiter;
 
-        if ((current - '0' < 0 || current - '0' > 9) && current != DOT_SIGN[0])
+        if (isDigit || current == DOT_SIGN[0] || current == Decimal::fraction_delimiter)
+            num_s += current;
+        else
         {
             ss.clear();
             ss.str(num_s);
@@ -333,9 +339,16 @@ string processStringInput(string input)
                 op = PLUS_SIGN[0];
             else if (current == MIN_SIGN[0])
                 op = MIN_SIGN[0];
+
+            char next = input[i + 1];
+            if (next == PLUS_SIGN[0] && i + 1 < input.size())
+                i++;
+            else if (next == MIN_SIGN[0] && i + 1 < input.size())
+            {
+                op = op == PLUS_SIGN[0] ? MIN_SIGN[0] : PLUS_SIGN[0];
+                i++;
+            }
         }
-        else
-            num_s += current;
     }
     // Final operation
     ss.clear();
@@ -351,7 +364,7 @@ string processStringInput(string input)
     // cout << "[log]: Finished computation.\n";
     // cout << "[log]: Final result: " << zero;
 
-    return zero.toString();
+    return zero.toFractString();
 }
 
 string solveOperation(string input, string op)
@@ -417,6 +430,9 @@ string solveOperation(string input, string op)
         ss >> fact2;
         Decimal res;
 
+        // cout << "[log] solveOperation() fact1: " << fact1;
+        // cout << "[log] solveOperation() fact2: " << fact2;
+
         // Compute the operations
         if (op == MULT_SIGN)
             res = fact1 * fact2;
@@ -425,9 +441,12 @@ string solveOperation(string input, string op)
         else if (op == DIV_SIGN)
             res = fact1 / fact2;
 
+        // cout << "[log] solveOperation() res: " << res;
+        // cout << "[log] solveOperation() res#: " << res.toFractString() << endl;
+
         // Replace the operation with the result
         input.erase(cut_start, cut_size);
-        input.insert(cut_start, res.toString());
+        input.insert(cut_start, res.toFractString());
 
         // Go over again
         ss.clear();

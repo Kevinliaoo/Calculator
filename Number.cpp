@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include "Number.h"
 
 using namespace std;
@@ -822,7 +823,7 @@ Number Number::power(const Number &times)
     return temp;
 }
 
-string Number::toString()
+string Number::toString() const
 {
     Number num = *this;
     string res = "";

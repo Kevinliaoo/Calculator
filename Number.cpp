@@ -145,7 +145,11 @@ const Number Number::operator*(const Number &number) const
         current = 0;
         next = 0;
     }
-    return Number(product, newSize, isPos);
+
+    Number res(product, newSize, isPos);
+    delete[] product;
+
+    return res;
 }
 
 const Number Number::operator-(const Number &number) const
@@ -357,7 +361,7 @@ const Number Number::operator/(const Number &number) const
 {
     int x[] = {0, 1, 2};
     bool output = true;
-    Number zero(x, 1, true);
+    const Number zero;
     Number ten(x, 2, true);
     Number dividend = *this;
     Number divisor = number;
@@ -451,7 +455,15 @@ const Number Number::operator/(const Number &number) const
         {
             ans[i] = temp_vector[temp_vector.size() - i - 1];
         }
-        return Number(ans, temp_vector.size(), output);
+
+        Number res(ans, temp_vector.size(), output);
+
+        delete[] ans;
+
+        if (res == zero && !res.getSign())
+            res.changeSign();
+
+        return res;
     }
 }
 
@@ -533,7 +545,8 @@ istream &operator>>(istream &strm, Number &num)
             }
             else
             {
-                cout << "Error: Invalid input\n";
+                cout << "[Error]: Invalid input (at Number::operator>>).\n";
+                cout << "The invalid character: " << intDigit << endl;
                 return strm;
             }
         }

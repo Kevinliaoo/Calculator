@@ -15,6 +15,7 @@ Integer makeIntCalculation(stringstream &ss);
 string processStringInput(string input);
 bool checkElementInVector(vector<string> source, string target);
 string solveOperation(string input, string op);
+void setVariable(map<string, Decimal> &variables, string varName, const Decimal &num);
 
 const string SET_STR = "Set";
 const string INTEGER_STR = "Integer";
@@ -34,6 +35,9 @@ const string POWER_KWORD = "Power";
 const string FACT_KWORD = "Factorial";
 const string VARIABLES = "Variables";
 
+// map where all variables are stored
+map<string, Decimal> variables;
+
 int main()
 {
     printInstructions();
@@ -52,8 +56,6 @@ int main()
     SPECIAL_SYMBOLS.push_back(POWER_KWORD);
     SPECIAL_SYMBOLS.push_back(FACT_KWORD);
 
-    map<string, Decimal> variables;
-
     string inputMessage;
     stringstream ss;
 
@@ -70,9 +72,11 @@ int main()
             ss >> eqSign >> datatype >> varName >> eqSign;
 
             if (datatype == INTEGER_STR)
-                variables.insert(pair<string, Decimal>(varName, makeIntCalculation(ss)));
+                setVariable(variables, varName, makeIntCalculation(ss));
+            // variables.insert(pair<string, Decimal>(varName, makeIntCalculation(ss)));
             else if (datatype == DECIMAL_STR)
-                variables.insert(pair<string, Decimal>(varName, makeDecCalculation(ss)));
+                setVariable(variables, varName, makeDecCalculation(ss));
+            // variables.insert(pair<string, Decimal>(varName, makeDecCalculation(ss)));
             else
             {
                 cout << "[Error]: Invalid datatype (at main.cpp).";
@@ -83,9 +87,9 @@ int main()
             printVariables(variables);
         else
         {
-            cout << ss.str() << " = ";
+            cout << ss.str() << " = \n";
             Decimal res = makeDecCalculation(ss);
-            cout << "  " << res << endl;
+            cout << res << endl;
         }
 
         ss.clear();
@@ -94,6 +98,7 @@ int main()
 }
 
 void printInstructions()
+// Prints the instructions menu for the user
 {
     cout << "-----------------------------------------------------------------\n";
     cout << "Instructions: \n";
@@ -111,6 +116,9 @@ void printInstructions()
 }
 
 Decimal makeDecCalculation(stringstream &ss)
+// Computes the an operation and returns the result in a Decimal
+// Precondition: ss is the stringstream from where to get the calculation
+// Postcondition: The result is returned as a Decimal
 {
     // Read the stringstream and delete all spaces
     string input = "", t;
@@ -126,6 +134,9 @@ Decimal makeDecCalculation(stringstream &ss)
 }
 
 Integer makeIntCalculation(stringstream &ss)
+// Computes the an operation and returns the result in a Integer
+// Precondition: ss is the stringstream from where to get the calculation
+// Postcondition: The result is returned as a Integer
 {
     // Read the stringstream and delete all spaces
     string input = "", t;
@@ -140,7 +151,23 @@ Integer makeIntCalculation(stringstream &ss)
     return temp;
 }
 
+Decimal getVarValue(map<string, Decimal> &vars, string varName)
+// Get the value of the variable stored in a map
+// Precondition: vars is the map where all variabels are stored as name: value
+// varName is the variable name to be searched
+{
+    map<string, Decimal>::iterator itr;
+    for (itr = vars.begin(); itr != vars.end(); itr++)
+        if (itr->first == varName)
+            return itr->second;
+
+    cout << "[Error]: Variable " << varName << " does not exist.\n";
+    return Decimal();
+}
+
 void printVariables(map<string, Decimal> &vars)
+// Prints all the variables list
+// Precondition: vars is the map where all variables are stored as name: value
 {
     cout << "Variables list: \n";
     map<string, Decimal>::iterator itr;
@@ -152,6 +179,8 @@ void printVariables(map<string, Decimal> &vars)
 Decimal decimalDivision(const Number &num1, const Number num2)
 // Decimal division. Converts denominator in a number power of 10
 // Divides two Integers and returns a Decimal
+// Precondition: num1 and num2 are Numbers to be divided
+// Postcondition: Decimal is the resulting number in Decimal mode
 {
     Number temp1 = num1;
     Number temp2 = num2;
@@ -243,6 +272,8 @@ string processStringInput(string input)
 
             parenthesis_index.pop_back();
             parenthesis_stack.pop_back();
+            // Rewind to where the parenthesis was opened
+            i = j;
 
             // cout << "[log]: Parenthesis solved.\n";
             // cout << input << endl;
@@ -252,46 +283,86 @@ string processStringInput(string input)
     // cout << "[log]: Starting arithmetic operations.\n";
     // cout << input << endl;
 
+    // Replace variables names with their values
+    {
+        string varName;
+        bool buildingName = false;
+        int i;
+        for (i = 0; i < input.size(); i++)
+        {
+            char letter = input[i];
+            int c = input[i];
+            if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122))
+            {
+                buildingName = true;
+                varName += letter;
+            }
+            else
+            {
+                if (buildingName)
+                {
+                    Decimal res = getVarValue(variables, varName);
+                    input.erase(i - varName.size(), varName.size());
+                    input.insert(i - varName.size(), res.toFractString());
+                    buildingName = false;
+                    varName = "";
+                }
+            }
+        }
+        if (buildingName)
+        {
+            Decimal res = getVarValue(variables, varName);
+            input.erase(i - varName.size(), varName.size());
+            input.insert(i - varName.size(), res.toFractString());
+            buildingName = false;
+        }
+    }
+
+    // cout << "[log]: Variables replaced.\n";
+    // cout << input << endl;
+
     // At this step, all parenthesis are removed
     // Detect factorials
-    int lastOpI = -1; // last operator index
-    for (int i = 0; i < input.size(); i++)
     {
-        if (input[i] - '0' >= 0 && input[i] - '0' <= 9)
+        int lastOpI = -1; // last operator index
+        for (int i = 0; i < input.size(); i++)
         {
-        }
-        else
-        {
-            bool factCalculated = false;
-            string s = "";
-            s += input[i];
-            string del = "";
-            del += Decimal::fraction_delimiter;
-            if (!checkElementInVector(SPECIAL_SYMBOLS, s) && s != del)
+            if (input[i] - '0' >= 0 && input[i] - '0' <= 9)
             {
-                cout << "[Error]: Invalid input (invalid characters detected).\n";
-                cout << "Invalid character: " << s << endl;
-                return "";
             }
-            else if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN && s != del)
+            else
             {
-                if (s == FACT_SIGN)
+                bool factCalculated = false;
+                string s = "";
+                s += input[i];
+                string del = "";
+                del += Decimal::fraction_delimiter;
+                if (!checkElementInVector(SPECIAL_SYMBOLS, s) && s != del)
                 {
-                    string subInput = input.substr(lastOpI + 1, i - lastOpI - 1);
-                    Integer temp;
-                    stringstream ss(subInput);
-                    ss >> temp;
-                    temp = temp.factorial();
-                    subInput += '!';
-                    input.erase(lastOpI + 1, subInput.size());
-                    input.insert(lastOpI + 1, temp.toString());
-                    factCalculated = true;
-                    i--;
+                    cout << "[Error]: Invalid input (invalid characters detected).\n";
+                    cout << "Invalid character: " << s << endl;
+                    return "";
                 }
-                if (!factCalculated)
-                    lastOpI = i;
+                else if (checkElementInVector(SPECIAL_SYMBOLS, s) && s != DOT_SIGN && s != del)
+                {
+                    if (s == FACT_SIGN)
+                    {
+                        string subInput = input.substr(lastOpI + 1, i - lastOpI - 1);
+                        Integer temp;
+                        stringstream ss(subInput);
+                        ss >> temp;
+                        temp = temp.factorial();
+                        subInput += '!';
+                        input.erase(lastOpI + 1, subInput.size());
+                        input.insert(lastOpI + 1, temp.toString());
+                        factCalculated = true;
+                        i--;
+                    }
+                    if (!factCalculated)
+                        lastOpI = i;
 
-                factCalculated = false;
+                    factCalculated = false;
+                }
             }
         }
     }
@@ -377,9 +448,10 @@ string processStringInput(string input)
 }
 
 string solveOperation(string input, string op)
-// Resolves power, multiplication and division
+// Resolves a calculation within a parenthesis (power, division and multiplication)
 // Precondition: input is the string containing the operation
 // op is the operation to be executed
+// Postcondition: The result of the computation in a string (fraction mode)
 {
     while (true)
     {
@@ -466,11 +538,29 @@ string solveOperation(string input, string op)
 }
 
 bool checkElementInVector(vector<string> source, string target)
-// This function checks if a string can be found in a string vector
+// Checks if a string can be found in a string vector
 {
     for (int i = 0; i < source.size(); i++)
         if (source[i] == target)
             return true;
 
     return false;
+}
+
+void setVariable(map<string, Decimal> &variables, string varName, const Decimal &num)
+// Inserts a new variable to variables list (map) or overrides if already exists
+// Precondition: variables is the map containing all variables
+// varName is the name of the variable, num is the Decimal to be stored
+{
+    map<string, Decimal>::iterator itr;
+
+    for (itr = variables.begin(); itr != variables.end(); itr++)
+    {
+        if (itr->first == varName)
+        {
+            variables[varName] = num;
+            return;
+        }
+    }
+    variables.insert(pair<string, Decimal>(varName, num));
 }

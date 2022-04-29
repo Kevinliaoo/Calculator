@@ -1,4 +1,5 @@
 #include <string>
+#include <sstream>
 #include "Number.h"
 
 Integer::Integer(const Number &num) : Decimal(num)
@@ -51,11 +52,39 @@ bool Integer::operator==(const Integer &integer) const
 }
 
 istream &operator>>(istream &strm, Integer &integer)
+// There are two input mode for storing a Decimal
+// Mode 1: Insert an integer directly
+// Mode 2: Using the # to separate between numerator and denominator,
+//         in this case, an integer division will be computed
 {
-    Number zero;
-    strm >> zero;
-    integer.numerator = zero;
-    integer.isPositive = zero.getSign();
+    string data, numerator, denominator;
+    strm >> data;
+
+    stringstream ss(data);
+    getline(ss, numerator, Decimal::fraction_delimiter);
+
+    if (data.size() == numerator.size())
+    {
+        ss.clear();
+        ss.str(data);
+        Number zero;
+        ss >> zero;
+        integer.numerator = zero;
+        integer.isPositive = zero.getSign();
+    }
+    else
+    {
+        getline(ss, denominator);
+        Number nume, deno;
+        ss.clear();
+        ss.str(numerator);
+        ss >> nume;
+        ss.clear();
+        ss.str(denominator);
+        ss >> deno;
+        nume = nume / deno;
+        integer = Integer(nume);
+    }
     return strm;
 }
 

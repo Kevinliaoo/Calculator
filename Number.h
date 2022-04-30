@@ -113,7 +113,7 @@ public:
     friend ostream &operator<<(ostream &strm, Integer &integer);
 
     Integer factorial();
-    string toString();
+    string toString() const;
     Integer power(const Integer &times);
 };
 #endif

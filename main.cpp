@@ -15,7 +15,9 @@ Integer makeIntCalculation(stringstream &ss);
 string processStringInput(string input);
 bool checkElementInVector(vector<string> source, string target);
 string solveOperation(string input, string op);
-void setVariable(map<string, Decimal> &variables, string varName, const Decimal &num);
+void setDecVariable(map<string, Decimal> &variables, string varName, const Decimal &num);
+void setIntVariable(map<string, Decimal> &variables, string varName, const Integer &num);
+bool inputHasDecimal(string input);
 
 const string SET_STR = "Set";
 const string INTEGER_STR = "Integer";
@@ -72,10 +74,10 @@ int main()
             ss >> eqSign >> datatype >> varName >> eqSign;
 
             if (datatype == INTEGER_STR)
-                setVariable(variables, varName, makeIntCalculation(ss));
+                setIntVariable(variables, varName, makeIntCalculation(ss));
             // variables.insert(pair<string, Decimal>(varName, makeIntCalculation(ss)));
             else if (datatype == DECIMAL_STR)
-                setVariable(variables, varName, makeDecCalculation(ss));
+                setDecVariable(variables, varName, makeDecCalculation(ss));
             // variables.insert(pair<string, Decimal>(varName, makeDecCalculation(ss)));
             else
             {
@@ -88,7 +90,7 @@ int main()
         else
         {
             cout << ss.str() << " = \n";
-            Decimal res = makeDecCalculation(ss);
+            Integer res = makeIntCalculation(ss);
             cout << res << endl;
         }
 
@@ -322,6 +324,8 @@ string processStringInput(string input)
     // cout << "[log]: Variables replaced.\n";
     // cout << input << endl;
 
+    bool hasDeicmal = inputHasDecimal(input);
+
     // At this step, all parenthesis are removed
     // Detect factorials
     {
@@ -547,13 +551,12 @@ bool checkElementInVector(vector<string> source, string target)
     return false;
 }
 
-void setVariable(map<string, Decimal> &variables, string varName, const Decimal &num)
-// Inserts a new variable to variables list (map) or overrides if already exists
+void setDecVariable(map<string, Decimal> &variables, string varName, const Decimal &num)
+// Inserts a new Decimal variable to variables list (map) or overrides if already exists
 // Precondition: variables is the map containing all variables
 // varName is the name of the variable, num is the Decimal to be stored
 {
     map<string, Decimal>::iterator itr;
-
     for (itr = variables.begin(); itr != variables.end(); itr++)
     {
         if (itr->first == varName)
@@ -562,5 +565,33 @@ void setVariable(map<string, Decimal> &variables, string varName, const Decimal 
             return;
         }
     }
+
     variables.insert(pair<string, Decimal>(varName, num));
+}
+void setIntVariable(map<string, Decimal> &variables, string varName, const Integer &num)
+// Inserts a new Integer variable to variables list (map) or overrides if already exists
+// Precondition: variables is the map containing all variables
+// varName is the name of the variable, num is the Integer to be stored
+{
+    map<string, Decimal>::iterator itr;
+    for (itr = variables.begin(); itr != variables.end(); itr++)
+    {
+        if (itr->first == varName)
+        {
+            variables[varName] = num;
+            return;
+        }
+    }
+
+    variables.insert(pair<string, Integer>(varName, num));
+}
+
+bool inputHasDecimal(string input)
+// This function returns true if the given input (operation) contains decimal numbers or fractions
+// Precondition: input is the string containing the operation to compute
+{
+    for (int i = 0; i < input.size(); i++)
+        if (input[i] == Decimal::decimal_point || input[i] == Decimal::fraction_delimiter)
+            return true;
+    return false;
 }

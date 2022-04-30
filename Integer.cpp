@@ -94,7 +94,7 @@ ostream &operator<<(ostream &strm, Integer &integer)
     return strm;
 }
 
-string Integer::toString()
+string Integer::toString() const
 {
     return this->numerator.toString();
 }

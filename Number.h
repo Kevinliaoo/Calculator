@@ -42,6 +42,8 @@ public:
     friend Number getLCM(const Number &num1, const Number &num2);
     friend ostream &operator<<(ostream &strm, const Number &num);
     friend istream &operator>>(istream &strm, Number &num);
+
+    static char minus_sign;
 };
 #endif
 
@@ -83,6 +85,7 @@ public:
     const Decimal simplify(const Decimal &num) const;
 
     static char fraction_delimiter;
+    static char decimal_point;
 };
 #endif
 

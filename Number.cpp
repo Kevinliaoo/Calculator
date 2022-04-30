@@ -6,6 +6,8 @@ using namespace std;
 
 /* ********** NUMBER ********** */
 
+char Number::minus_sign = '-';
+
 // Constructors
 Number::Number()
 // Default constructor: build zero
@@ -372,7 +374,7 @@ const Number Number::operator/(const Number &number) const
     vector<int> temp_vector;
     if (number == zero)
     {
-        cout << "[Error]: Can not divide by zero.\n";
+        cout << "[Error]: Can not divide by zero (at Number::operator/).\n";
         return zero;
     }
     else if (*this == zero)
@@ -732,7 +734,7 @@ Number Number::factorial()
     Number zero(x + 1, 1, true);
     if (!this->isPositive)
     {
-        cout << "Error: Can not calculate the factorial of a negative number\n";
+        cout << "[Error]: Can not calculate the factorial of a negative number\n";
         return zero;
     }
     if (temp == zero)

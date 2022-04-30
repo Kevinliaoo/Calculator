@@ -8,6 +8,7 @@ using namespace std;
 /* ********** DECIMAL ********** */
 
 char Decimal::fraction_delimiter = '#';
+char Decimal::decimal_point = '.';
 
 Decimal::Decimal()
 {
@@ -361,126 +362,107 @@ istream &operator>>(istream &strm, Decimal &num)
 // Mode 1: Using the . to separate Integer part with Decimal part
 // Mode 2: Using the # to separate between numerator and denominator
 {
-    int a[1] = {1};
-    int b[2] = {0, 1};
-    Number one(a, 1, true);
-    Number ten(b, 2, true);
-
     string numberString;
     strm >> numberString;
-    int size = numberString.size();
+
+    bool isPositive = numberString[0] == Number::minus_sign ? false : true;
+    // Remove the negative sign
+    if (!isPositive)
+        numberString.erase(0, 1);
 
     // Determines the input mode
-    bool hasFractDel = false;
-    for (int i = 0; i < size; i++)
+    int dotIndex = -1;
+    int fdelIndex = -1;
+    for (int i = 0; i < numberString.size(); i++)
     {
-        if (numberString[i] == Decimal::fraction_delimiter)
+        if (numberString[i] == Decimal::fraction_delimiter && fdelIndex == -1 && dotIndex == -1)
+            fdelIndex = i;
+        else if (numberString[i] == Decimal::decimal_point && dotIndex == -1 && fdelIndex == -1)
+            dotIndex = i;
+        else if (numberString[i] - '0' >= 0 && numberString[i] - '0' <= 9)
+            continue;
+        else
         {
-            hasFractDel = true;
-            break;
+            if (fdelIndex != -1 && i == (fdelIndex + 1) && numberString[i] == Number::minus_sign)
+                continue;
+            cout << "[Error]: Invalid input (at Decimal::operator>>).\n";
+            return strm;
         }
     }
 
-    // Dot mode
-    if (!hasFractDel)
+    // No decimal point nor fraction
+    if (dotIndex == -1 && fdelIndex == -1)
     {
-        vector<int> numDigits;
-        bool isPositive = true;
-        int decimalPlaces = 0;
-        bool decimalActivated = false;
+        Number numerator;
+        stringstream ss(numberString);
+        ss >> numerator;
+        if (!isPositive)
+            numerator.changeSign();
+        Decimal res(numerator);
+        num = res;
+    }
+    // Decimal point
+    else if (dotIndex >= 0 && fdelIndex == -1)
+    {
+        string denominator_s = "1";
+        const char zero_c = '0';
 
-        for (int i = size - 1; i >= 0; i--)
-        {
-            char currentDigit = numberString[i];
-            if (i == 0)
-            {
-                if (currentDigit == '-')
-                {
-                    isPositive = false;
-                    continue;
-                }
-            }
-
-            if (currentDigit == '.')
-            {
-                if (decimalActivated == false)
-                {
-                    decimalActivated = true;
-                    continue;
-                }
-                else
-                {
-                    cout << "[Error]: Invalid input (at Decimal::operator>>).\n";
-                    return strm;
-                }
-            }
-
-            int intDigit = currentDigit - '0';
-            if (intDigit < 0 || intDigit > 9)
-            {
-                cout << "[Error]: Invalid input (at Decimal::operator>>).\n";
-                return strm;
-            }
-
-            numDigits.push_back(intDigit);
-            if (decimalActivated)
-                decimalPlaces++;
-        }
-
-        decimalPlaces = numDigits.size() - decimalPlaces;
-        if (!decimalActivated)
-            decimalPlaces = 0;
+        int decimalPlaces = dotIndex != -1 ? numberString.size() - dotIndex - 1 : 0;
+        if (dotIndex >= 0)
+            numberString.erase(dotIndex, 1);
 
         for (int i = 0; i < decimalPlaces; i++)
-            one = one * ten;
+            denominator_s += zero_c;
 
-        for (int i = numDigits.size() - 1; i >= 0; i--)
+        // Remove unnecessary zeros on the back
+        int num_i = numberString.size() - 1;
+        int den_i = denominator_s.size() - 1;
+        while (numberString[num_i] == zero_c && numberString.size() > 0 && denominator_s.size() > 1)
         {
-            if (numDigits[i] != 0)
-                break;
-            numDigits.pop_back();
+            numberString.erase(num_i, 1);
+            denominator_s.erase(den_i, 1);
+
+            num_i--;
+            den_i--;
         }
-
-        if (numDigits.size() == 0)
-            numDigits.push_back(0);
-
-        int *c = &numDigits[0];
-        Number numerator(c, numDigits.size(), isPositive);
-
-        // Simplify zeros
-        if (decimalActivated)
-        {
-            for (int i = numerator.getSize() - 1; i >= 0; i--)
-            {
-                if (numerator[i] != 0)
-                    break;
-                numerator = numerator / ten;
-                one = one / ten;
-            }
-        }
-
-        Decimal temp(numerator, one);
-        num = temp;
-    }
-    // Fraction mode
-    else
-    {
-        string nume, den;
-        stringstream ss(numberString);
-
-        getline(ss, nume, Decimal::fraction_delimiter);
-        getline(ss, den);
-
-        // cout << "[log]: Numerator: " << nume << endl;
-        // cout << "[log]: Denominator: " << den << endl;
 
         Number numerator, denominator;
-        ss.clear();
-        ss.str(nume);
+
+        stringstream ss(numberString);
         ss >> numerator;
         ss.clear();
-        ss.str(den);
+        ss.str(denominator_s);
         ss >> denominator;
+
+        if (!isPositive)
+            numerator.changeSign();
+
+        Decimal res(numerator, denominator);
+        num = res;
+    }
+    // Fraction mode
+    else if (dotIndex == -1 && fdelIndex >= 0)
+    {
+        string num_s, den_s;
+
+        num_s = numberString.substr(0, fdelIndex);
+        den_s = numberString.substr(fdelIndex + 1, numberString.size() - 1);
+
+        if (den_s[0] == Number::minus_sign)
+        {
+            isPositive = !isPositive;
+            den_s.erase(0, 1);
+        }
+
+        Number numerator, denominator;
+        stringstream ss(num_s);
+        ss >> numerator;
+        ss.clear();
+        ss.str(den_s);
+        ss >> denominator;
+
+        if (!isPositive)
+            numerator.changeSign();
 
         Decimal res(numerator, denominator);
         num = res;

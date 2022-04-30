@@ -99,7 +99,7 @@ string Integer::toString() const
     return this->numerator.toString();
 }
 
-Integer Integer::factorial()
+Integer Integer::factorial() const
 {
     Number temp;
     temp = this->numerator.factorial();

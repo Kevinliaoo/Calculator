@@ -725,7 +725,7 @@ const Number Number::subtract(const Number &number) const
     return res;
 }
 
-Number Number::factorial()
+Number Number::factorial() const
 {
     int x[] = {1, 0};
     Number temp = *this;

@@ -210,8 +210,8 @@ void Decimal::divideSelf()
         int i = 0;
         for (i = 0; i < temp2.getSize(); i++)
         {
-            if (i == 0 && temp2[i] == 1)
-                continue;
+            if (i == 0 && temp2[i] != 1)
+                break;
             if (i > 0 && temp2[i] != 0)
                 break;
         }
@@ -271,6 +271,21 @@ void Decimal::divideSelf()
 
     this->numerator = quotient;
     this->denominator = one_temp;
+}
+
+Decimal Decimal::factorial() const
+{
+    Number zero;
+    if (this->numerator % this->denominator == zero)
+    {
+        Number temp = this->numerator / this->denominator;
+        return temp.factorial();
+    }
+    else
+    {
+        cout << "[Error]: Decimal numbers does not admit factorial.\n";
+        return Decimal();
+    }
 }
 
 string Decimal::toFractString() const

@@ -29,7 +29,7 @@ public:
     bool operator==(const Number &number) const;
     int operator[](int index) const;
 
-    Number factorial();
+    Number factorial() const;
     Number power(const Number &times);
     void changeSign();
     bool getSign() const;
@@ -80,6 +80,7 @@ public:
     void printFraction();
     Decimal power(const Decimal &times) const;
     Decimal square() const;
+    Decimal factorial() const;
     string toString() const;
     string toFractString() const;
     const Decimal simplify(const Decimal &num) const;
@@ -112,7 +113,7 @@ public:
     friend istream &operator>>(istream &strm, Integer &integer);
     friend ostream &operator<<(ostream &strm, Integer &integer);
 
-    Integer factorial();
+    Integer factorial() const;
     string toString() const;
     Integer power(const Integer &times);
 };

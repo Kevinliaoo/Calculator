@@ -373,13 +373,26 @@ string processStringInput(string input)
                     if (s == FACT_SIGN)
                     {
                         string subInput = input.substr(lastOpI + 1, i - lastOpI - 1);
-                        Integer temp;
+                        bool hasDecimal = inputHasDecimal(subInput);
                         stringstream ss(subInput);
-                        ss >> temp;
-                        temp = temp.factorial();
+                        string fact_res;
+                        if (!hasDecimal)
+                        {
+                            Integer temp;
+                            ss >> temp;
+                            temp = temp.factorial();
+                            fact_res = temp.toString();
+                        }
+                        else
+                        {
+                            Decimal temp;
+                            ss >> temp;
+                            temp = temp.factorial();
+                            fact_res = temp.toString();
+                        }
                         subInput += '!';
                         input.erase(lastOpI + 1, subInput.size());
-                        input.insert(lastOpI + 1, temp.toString());
+                        input.insert(lastOpI + 1, fact_res);
                         factCalculated = true;
                         i--;
                     }

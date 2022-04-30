@@ -258,7 +258,7 @@ void Decimal::divideSelf()
         reminder = reminder % temp2;
 
         // 100 decimal digits of precision
-        if (ten_times == 100)
+        if (ten_times == Decimal::max_decimal_digits)
             break;
     }
 
@@ -279,7 +279,7 @@ string Decimal::toFractString() const
 {
     string res;
     if (!this->isPositive)
-        res += "-";
+        res += Number::minus_sign;
     res += this->numerator.toString();
     res += Decimal::fraction_delimiter;
     res += this->denominator.toString();
@@ -295,27 +295,31 @@ string Decimal::toString() const
     temp.divideSelf();
 
     if (!temp.isPositive)
-        res += "-";
+        res += Number::minus_sign;
 
     int noZeroPositions = temp.numerator.getSize() - temp.denominator.getSize() + 1;
+    int decimalPlaces = 0;
 
-    if (noZeroPositions == 0)
-        res += "0";
-    else if (noZeroPositions < 0)
+    if (noZeroPositions <= 0)
     {
         res += "0.";
         for (int i = 0; i < -noZeroPositions; i++)
+        {
+            decimalPlaces++;
             res += "0";
+        }
     }
-
     for (int i = 0; i < temp.numerator.getSize(); i++)
     {
-        if (i == noZeroPositions)
-            res += ".";
+        if (i == noZeroPositions && noZeroPositions > 0)
+            res += Decimal::decimal_point;
         res += to_string(temp.numerator[i]);
+        if (i >= noZeroPositions)
+            decimalPlaces++;
     }
 
-    int decimalPlaces = temp.numerator.getSize() - 1;
+    if (decimalPlaces == 0)
+        res += Decimal::decimal_point;
 
     for (int i = 0; i < Decimal::max_decimal_digits - decimalPlaces; i++)
         res += '0';

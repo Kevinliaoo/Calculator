@@ -16,6 +16,7 @@ string getVarValue(map<string, string> &vars, string varName);
 string processStringInput(string input);
 bool checkElementInVector(vector<string> source, string target);
 string solveOperation(string input, string op);
+string solveBasicOperation(string input, char op1, char op2);
 void setDecVariable(map<string, string> &variables, string varName, const Decimal &num);
 void setIntVariable(map<string, string> &variables, string varName, const Integer &num);
 bool inputHasDecimal(string input);
@@ -416,24 +417,50 @@ string processStringInput(string input)
     // cout << "[log]: Finished power.\n";
     // cout << input << endl;
 
-    // Detect Division
-    input = solveOperation(input, DIV_SIGN);
+    // Multiplication and division
+    input = solveBasicOperation(input, MULT_SIGN[0], DIV_SIGN[0]);
 
-    // cout << "[log]: Finished division.\n";
-    // cout << input << endl;
-
-    // Detect Multiplication
-    input = solveOperation(input, MULT_SIGN);
-
-    // cout << "[log]: Finished multiplication.\n";
+    // cout << "[log]: Finished multiplication and division.\n";
     // cout << input << endl;
 
     // Addition and subtraction
+    input = solveBasicOperation(input, PLUS_SIGN[0], MIN_SIGN[0]);
+
+    // cout << "[log]: Finished addition and subtraction.\n";
+    // cout << input << endl;
+
+    stringstream ssres(input);
+    if (hasDeicmal)
+    {
+        Decimal res;
+        ssres >> res;
+        return res.toFractString();
+    }
+    else
+    {
+        Integer res;
+        ssres >> res;
+        return res.toString();
+    }
+}
+
+string solveBasicOperation(string input, char op1, char op2)
+// Precondition: op1 and op2 ONLY admits two combinations:
+//              Combination 1: + and -
+//              Combination 2: * and /
+//              input is the string which contains the calculation
+{
+    bool hasDeicmal = inputHasDecimal(input);
     if (hasDeicmal)
     {
         Decimal zero;
+        if (op1 == MULT_SIGN[0])
+        {
+            stringstream ss("1");
+            ss >> zero;
+        }
         string num_s;
-        char op = PLUS_SIGN[0];
+        char op = op1;
         stringstream ss;
         for (int i = 0; i < input.size(); i++)
         {
@@ -450,22 +477,32 @@ string processStringInput(string input)
                 Decimal temp;
                 ss >> temp;
                 num_s = "";
-                if (op == PLUS_SIGN[0])
-                    zero = zero + temp;
-                else if (op == MIN_SIGN[0])
-                    zero = zero - temp;
+                if (op == op1)
+                {
+                    if (op1 == PLUS_SIGN[0])
+                        zero = zero + temp;
+                    else if (op1 == MULT_SIGN[0])
+                        zero = zero * temp;
+                }
+                else if (op == op2)
+                {
+                    if (op2 == MIN_SIGN[0])
+                        zero = zero - temp;
+                    else if (op2 == DIV_SIGN[0])
+                        zero = zero / temp;
+                }
 
-                if (current == PLUS_SIGN[0])
-                    op = PLUS_SIGN[0];
-                else if (current == MIN_SIGN[0])
-                    op = MIN_SIGN[0];
+                if (current == op1)
+                    op = op1;
+                else if (current == op2)
+                    op = op2;
 
                 char next = input[i + 1];
-                if (next == PLUS_SIGN[0] && i + 1 < input.size())
+                if (next == op1 && i + 1 < input.size())
                     i++;
-                else if (next == MIN_SIGN[0] && i + 1 < input.size())
+                else if (next == op2 && i + 1 < input.size())
                 {
-                    op = op == PLUS_SIGN[0] ? MIN_SIGN[0] : PLUS_SIGN[0];
+                    op = op == op1 ? op2 : op1;
                     i++;
                 }
             }
@@ -475,10 +512,20 @@ string processStringInput(string input)
         ss.str(num_s);
         Decimal temp;
         ss >> temp;
-        if (op == PLUS_SIGN[0])
-            zero = zero + temp;
-        else if (op == MIN_SIGN[0])
-            zero = zero - temp;
+        if (op == op1)
+        {
+            if (op1 == PLUS_SIGN[0])
+                zero = zero + temp;
+            else if (op1 == MULT_SIGN[0])
+                zero = zero * temp;
+        }
+        else if (op == op2)
+        {
+            if (op2 == MIN_SIGN[0])
+                zero = zero - temp;
+            else if (op2 == DIV_SIGN[0])
+                zero = zero / temp;
+        }
 
         // cout << "[log]: Finished computation.\n";
         // cout << "[log]: Final result: " << zero;
@@ -488,8 +535,13 @@ string processStringInput(string input)
     else
     {
         Integer zero;
+        if (op1 == MULT_SIGN[0])
+        {
+            stringstream ss("1");
+            ss >> zero;
+        }
         string num_s;
-        char op = PLUS_SIGN[0];
+        char op = op1;
         stringstream ss;
         for (int i = 0; i < input.size(); i++)
         {
@@ -506,22 +558,32 @@ string processStringInput(string input)
                 Integer temp;
                 ss >> temp;
                 num_s = "";
-                if (op == PLUS_SIGN[0])
-                    zero = zero + temp;
-                else if (op == MIN_SIGN[0])
-                    zero = zero - temp;
+                if (op == op1)
+                {
+                    if (op1 == PLUS_SIGN[0])
+                        zero = zero + temp;
+                    else if (op1 == MULT_SIGN[0])
+                        zero = zero * temp;
+                }
+                else if (op == op2)
+                {
+                    if (op2 == MIN_SIGN[0])
+                        zero = zero - temp;
+                    else if (op2 == DIV_SIGN[0])
+                        zero = zero / temp;
+                }
 
-                if (current == PLUS_SIGN[0])
-                    op = PLUS_SIGN[0];
-                else if (current == MIN_SIGN[0])
-                    op = MIN_SIGN[0];
+                if (current == op1)
+                    op = op1;
+                else if (current == op2)
+                    op = op2;
 
                 char next = input[i + 1];
-                if (next == PLUS_SIGN[0] && i + 1 < input.size())
+                if (next == op1 && i + 1 < input.size())
                     i++;
-                else if (next == MIN_SIGN[0] && i + 1 < input.size())
+                else if (next == op2 && i + 1 < input.size())
                 {
-                    op = op == PLUS_SIGN[0] ? MIN_SIGN[0] : PLUS_SIGN[0];
+                    op = op == op1 ? op2 : op1;
                     i++;
                 }
             }
@@ -531,10 +593,20 @@ string processStringInput(string input)
         ss.str(num_s);
         Integer temp;
         ss >> temp;
-        if (op == PLUS_SIGN[0])
-            zero = zero + temp;
-        else if (op == MIN_SIGN[0])
-            zero = zero - temp;
+        if (op == op1)
+        {
+            if (op1 == PLUS_SIGN[0])
+                zero = zero + temp;
+            else if (op1 == MULT_SIGN[0])
+                zero = zero * temp;
+        }
+        else if (op == op2)
+        {
+            if (op2 == MIN_SIGN[0])
+                zero = zero - temp;
+            else if (op2 == DIV_SIGN[0])
+                zero = zero / temp;
+        }
 
         // cout << "[log]: Finished computation.\n";
         // cout << "[log]: Final result: " << zero;

@@ -9,14 +9,15 @@ using namespace std;
 
 void printInstructions();
 Decimal decimalDivision(const Number &num1, const Number num2);
-void printVariables(map<string, Decimal> &vars);
+void printVariables(map<string, string> &vars);
 Decimal makeDecCalculation(stringstream &ss);
 Integer makeIntCalculation(stringstream &ss);
+string getVarValue(map<string, string> &vars, string varName);
 string processStringInput(string input);
 bool checkElementInVector(vector<string> source, string target);
 string solveOperation(string input, string op);
-void setDecVariable(map<string, Decimal> &variables, string varName, const Decimal &num);
-void setIntVariable(map<string, Decimal> &variables, string varName, const Integer &num);
+void setDecVariable(map<string, string> &variables, string varName, const Decimal &num);
+void setIntVariable(map<string, string> &variables, string varName, const Integer &num);
 bool inputHasDecimal(string input);
 
 const string SET_STR = "Set";
@@ -38,7 +39,7 @@ const string FACT_KWORD = "Factorial";
 const string VARIABLES = "Variables";
 
 // map where all variables are stored
-map<string, Decimal> variables;
+map<string, string> variables;
 
 int main()
 {
@@ -75,10 +76,10 @@ int main()
 
             if (datatype == INTEGER_STR)
                 setIntVariable(variables, varName, makeIntCalculation(ss));
-            // variables.insert(pair<string, Decimal>(varName, makeIntCalculation(ss)));
+            // variables.insert(pair<string, string>(varName, makeIntCalculation(ss)));
             else if (datatype == DECIMAL_STR)
                 setDecVariable(variables, varName, makeDecCalculation(ss));
-            // variables.insert(pair<string, Decimal>(varName, makeDecCalculation(ss)));
+            // variables.insert(pair<string, string>(varName, makeDecCalculation(ss)));
             else
             {
                 cout << "[Error]: Invalid datatype (at main.cpp).";
@@ -90,8 +91,26 @@ int main()
         else
         {
             cout << ss.str() << " = \n";
-            Integer res = makeIntCalculation(ss);
-            cout << res << endl;
+            string input, temp;
+            while (ss >> temp)
+                input += temp;
+            string res = processStringInput(input);
+            bool hasDeicmal = inputHasDecimal(res);
+            ss.clear();
+            ss.str(res);
+            if (hasDeicmal)
+            {
+                Decimal f_result;
+                ss >> f_result;
+                cout << f_result;
+            }
+            else
+            {
+                Integer f_result;
+                ss >> f_result;
+                cout << f_result;
+            }
+            cout << endl;
         }
 
         ss.clear();
@@ -154,29 +173,30 @@ Integer makeIntCalculation(stringstream &ss)
     return temp;
 }
 
-Decimal getVarValue(map<string, Decimal> &vars, string varName)
+string getVarValue(map<string, string> &vars, string varName)
 // Get the value of the variable stored in a map
 // Precondition: vars is the map where all variabels are stored as name: value
 // varName is the variable name to be searched
 {
-    map<string, Decimal>::iterator itr;
+    map<string, string>::iterator itr;
     for (itr = vars.begin(); itr != vars.end(); itr++)
         if (itr->first == varName)
             return itr->second;
 
     cout << "[Error]: Variable " << varName << " does not exist.\n";
-    return Decimal();
+    return "0";
 }
 
-void printVariables(map<string, Decimal> &vars)
+void printVariables(map<string, string> &vars)
 // Prints all the variables list
 // Precondition: vars is the map where all variables are stored as name: value
 {
     cout << "Variables list: \n";
-    map<string, Decimal>::iterator itr;
+    map<string, string>::iterator itr;
     for (itr = vars.begin(); itr != vars.end(); itr++)
-        cout << itr->first << ": " << itr->second;
-    cout << endl;
+        cout << itr->first << ": " << itr->second << endl;
+    cout << endl
+         << endl;
 }
 
 Decimal decimalDivision(const Number &num1, const Number num2)
@@ -304,9 +324,9 @@ string processStringInput(string input)
             {
                 if (buildingName)
                 {
-                    Decimal res = getVarValue(variables, varName);
+                    string res = getVarValue(variables, varName);
                     input.erase(i - varName.size(), varName.size());
-                    input.insert(i - varName.size(), res.toFractString());
+                    input.insert(i - varName.size(), res);
                     buildingName = false;
                     varName = "";
                 }
@@ -314,9 +334,9 @@ string processStringInput(string input)
         }
         if (buildingName)
         {
-            Decimal res = getVarValue(variables, varName);
+            string res = getVarValue(variables, varName);
             input.erase(i - varName.size(), varName.size());
-            input.insert(i - varName.size(), res.toFractString());
+            input.insert(i - varName.size(), res);
             buildingName = false;
         }
     }
@@ -396,59 +416,118 @@ string processStringInput(string input)
     // cout << input << endl;
 
     // Addition and subtraction
-    Decimal zero;
-    string num_s;
-    char op = PLUS_SIGN[0];
-    stringstream ss;
-    for (int i = 0; i < input.size(); i++)
+    if (hasDeicmal)
     {
-        char current = input[i];
-        bool isDigit = current - '0' >= 0 && current - '0' <= 9;
-        bool temp = current == Decimal::fraction_delimiter;
-
-        if (isDigit || current == DOT_SIGN[0] || current == Decimal::fraction_delimiter)
-            num_s += current;
-        else
+        Decimal zero;
+        string num_s;
+        char op = PLUS_SIGN[0];
+        stringstream ss;
+        for (int i = 0; i < input.size(); i++)
         {
-            ss.clear();
-            ss.str(num_s);
-            Decimal temp;
-            ss >> temp;
-            num_s = "";
-            if (op == PLUS_SIGN[0])
-                zero = zero + temp;
-            else if (op == MIN_SIGN[0])
-                zero = zero - temp;
+            char current = input[i];
+            bool isDigit = current - '0' >= 0 && current - '0' <= 9;
+            bool temp = current == Decimal::fraction_delimiter;
 
-            if (current == PLUS_SIGN[0])
-                op = PLUS_SIGN[0];
-            else if (current == MIN_SIGN[0])
-                op = MIN_SIGN[0];
-
-            char next = input[i + 1];
-            if (next == PLUS_SIGN[0] && i + 1 < input.size())
-                i++;
-            else if (next == MIN_SIGN[0] && i + 1 < input.size())
+            if (isDigit || current == DOT_SIGN[0] || current == Decimal::fraction_delimiter)
+                num_s += current;
+            else
             {
-                op = op == PLUS_SIGN[0] ? MIN_SIGN[0] : PLUS_SIGN[0];
-                i++;
+                ss.clear();
+                ss.str(num_s);
+                Decimal temp;
+                ss >> temp;
+                num_s = "";
+                if (op == PLUS_SIGN[0])
+                    zero = zero + temp;
+                else if (op == MIN_SIGN[0])
+                    zero = zero - temp;
+
+                if (current == PLUS_SIGN[0])
+                    op = PLUS_SIGN[0];
+                else if (current == MIN_SIGN[0])
+                    op = MIN_SIGN[0];
+
+                char next = input[i + 1];
+                if (next == PLUS_SIGN[0] && i + 1 < input.size())
+                    i++;
+                else if (next == MIN_SIGN[0] && i + 1 < input.size())
+                {
+                    op = op == PLUS_SIGN[0] ? MIN_SIGN[0] : PLUS_SIGN[0];
+                    i++;
+                }
             }
         }
+        // Final operation
+        ss.clear();
+        ss.str(num_s);
+        Decimal temp;
+        ss >> temp;
+        if (op == PLUS_SIGN[0])
+            zero = zero + temp;
+        else if (op == MIN_SIGN[0])
+            zero = zero - temp;
+
+        // cout << "[log]: Finished computation.\n";
+        // cout << "[log]: Final result: " << zero;
+
+        return zero.toFractString();
     }
-    // Final operation
-    ss.clear();
-    ss.str(num_s);
-    Decimal temp;
-    ss >> temp;
-    if (op == PLUS_SIGN[0])
-        zero = zero + temp;
-    else if (op == MIN_SIGN[0])
-        zero = zero - temp;
+    else
+    {
+        Integer zero;
+        string num_s;
+        char op = PLUS_SIGN[0];
+        stringstream ss;
+        for (int i = 0; i < input.size(); i++)
+        {
+            char current = input[i];
+            bool isDigit = current - '0' >= 0 && current - '0' <= 9;
+            bool temp = current == Decimal::fraction_delimiter;
 
-    // cout << "[log]: Finished computation.\n";
-    // cout << "[log]: Final result: " << zero;
+            if (isDigit || current == DOT_SIGN[0] || current == Decimal::fraction_delimiter)
+                num_s += current;
+            else
+            {
+                ss.clear();
+                ss.str(num_s);
+                Integer temp;
+                ss >> temp;
+                num_s = "";
+                if (op == PLUS_SIGN[0])
+                    zero = zero + temp;
+                else if (op == MIN_SIGN[0])
+                    zero = zero - temp;
 
-    return zero.toFractString();
+                if (current == PLUS_SIGN[0])
+                    op = PLUS_SIGN[0];
+                else if (current == MIN_SIGN[0])
+                    op = MIN_SIGN[0];
+
+                char next = input[i + 1];
+                if (next == PLUS_SIGN[0] && i + 1 < input.size())
+                    i++;
+                else if (next == MIN_SIGN[0] && i + 1 < input.size())
+                {
+                    op = op == PLUS_SIGN[0] ? MIN_SIGN[0] : PLUS_SIGN[0];
+                    i++;
+                }
+            }
+        }
+        // Final operation
+        ss.clear();
+        ss.str(num_s);
+        Integer temp;
+        ss >> temp;
+        if (op == PLUS_SIGN[0])
+            zero = zero + temp;
+        else if (op == MIN_SIGN[0])
+            zero = zero - temp;
+
+        // cout << "[log]: Finished computation.\n";
+        // cout << "[log]: Final result: " << zero;
+
+        return zero.toString();
+    }
 }
 
 string solveOperation(string input, string op)
@@ -457,6 +536,8 @@ string solveOperation(string input, string op)
 // op is the operation to be executed
 // Postcondition: The result of the computation in a string (fraction mode)
 {
+    bool hasDeicmal = inputHasDecimal(input);
+
     while (true)
     {
         // Separate the operands
@@ -506,32 +587,64 @@ string solveOperation(string input, string op)
         int cut_size = fact1_s.size() + fact2_s.size() + 1;
 
         // Build the numbers
-        Decimal fact1, fact2;
-        ss.clear();
-        ss.str(fact1_s);
-        ss >> fact1;
-        ss.clear();
-        ss.str(fact2_s);
-        ss >> fact2;
-        Decimal res;
+        if (hasDeicmal)
+        {
+            Decimal fact1, fact2;
+            ss.clear();
+            ss.str(fact1_s);
+            ss >> fact1;
+            ss.clear();
+            ss.str(fact2_s);
+            ss >> fact2;
+            Decimal res;
 
-        // cout << "[log] solveOperation() fact1: " << fact1;
-        // cout << "[log] solveOperation() fact2: " << fact2;
+            // cout << "[log] solveOperation() fact1: " << fact1;
+            // cout << "[log] solveOperation() fact2: " << fact2;
 
-        // Compute the operations
-        if (op == MULT_SIGN)
-            res = fact1 * fact2;
-        else if (op == POW_SIGN)
-            res = fact1.power(fact2);
-        else if (op == DIV_SIGN)
-            res = fact1 / fact2;
+            // Compute the operations
+            if (op == MULT_SIGN)
+                res = fact1 * fact2;
+            else if (op == POW_SIGN)
+                res = fact1.power(fact2);
+            else if (op == DIV_SIGN)
+                res = fact1 / fact2;
 
-        // cout << "[log] solveOperation() res: " << res;
-        // cout << "[log] solveOperation() res#: " << res.toFractString() << endl;
+            // cout << "[log] solveOperation() res: " << res;
+            // cout << "[log] solveOperation() res#: " << res.toFractString() << endl;
 
-        // Replace the operation with the result
-        input.erase(cut_start, cut_size);
-        input.insert(cut_start, res.toFractString());
+            // Replace the operation with the result
+            input.erase(cut_start, cut_size);
+            input.insert(cut_start, res.toFractString());
+        }
+        else
+        {
+            Integer fact1, fact2;
+            ss.clear();
+            ss.str(fact1_s);
+            ss >> fact1;
+            ss.clear();
+            ss.str(fact2_s);
+            ss >> fact2;
+            Integer res;
+
+            // cout << "[log] solveOperation() fact1: " << fact1;
+            // cout << "[log] solveOperation() fact2: " << fact2;
+
+            // Compute the operations
+            if (op == MULT_SIGN)
+                res = fact1 * fact2;
+            else if (op == POW_SIGN)
+                res = fact1.power(fact2);
+            else if (op == DIV_SIGN)
+                res = fact1 / fact2;
+
+            // cout << "[log] solveOperation() res: " << res;
+            // cout << "[log] solveOperation() res#: " << res.toFractString() << endl;
+
+            // Replace the operation with the result
+            input.erase(cut_start, cut_size);
+            input.insert(cut_start, res.toString());
+        }
 
         // Go over again
         ss.clear();
@@ -551,39 +664,39 @@ bool checkElementInVector(vector<string> source, string target)
     return false;
 }
 
-void setDecVariable(map<string, Decimal> &variables, string varName, const Decimal &num)
+void setDecVariable(map<string, string> &variables, string varName, const Decimal &num)
 // Inserts a new Decimal variable to variables list (map) or overrides if already exists
 // Precondition: variables is the map containing all variables
 // varName is the name of the variable, num is the Decimal to be stored
 {
-    map<string, Decimal>::iterator itr;
+    map<string, string>::iterator itr;
     for (itr = variables.begin(); itr != variables.end(); itr++)
     {
         if (itr->first == varName)
         {
-            variables[varName] = num;
+            variables[varName] = num.toFractString();
             return;
         }
     }
 
-    variables.insert(pair<string, Decimal>(varName, num));
+    variables.insert(pair<string, string>(varName, num.toFractString()));
 }
-void setIntVariable(map<string, Decimal> &variables, string varName, const Integer &num)
+void setIntVariable(map<string, string> &variables, string varName, const Integer &num)
 // Inserts a new Integer variable to variables list (map) or overrides if already exists
 // Precondition: variables is the map containing all variables
 // varName is the name of the variable, num is the Integer to be stored
 {
-    map<string, Decimal>::iterator itr;
+    map<string, string>::iterator itr;
     for (itr = variables.begin(); itr != variables.end(); itr++)
     {
         if (itr->first == varName)
         {
-            variables[varName] = num;
+            variables[varName] = num.toString();
             return;
         }
     }
 
-    variables.insert(pair<string, Integer>(varName, num));
+    variables.insert(pair<string, string>(varName, num.toString()));
 }
 
 bool inputHasDecimal(string input)

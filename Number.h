@@ -86,6 +86,7 @@ public:
 
     static char fraction_delimiter;
     static char decimal_point;
+    static int max_decimal_digits;
 };
 #endif
 

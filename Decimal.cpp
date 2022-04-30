@@ -9,6 +9,7 @@ using namespace std;
 
 char Decimal::fraction_delimiter = '#';
 char Decimal::decimal_point = '.';
+int Decimal::max_decimal_digits = 100;
 
 Decimal::Decimal()
 {
@@ -314,6 +315,11 @@ string Decimal::toString() const
         res += to_string(temp.numerator[i]);
     }
 
+    int decimalPlaces = temp.numerator.getSize() - 1;
+
+    for (int i = 0; i < Decimal::max_decimal_digits - decimalPlaces; i++)
+        res += '0';
+
     return res;
 }
 
@@ -328,32 +334,8 @@ const Decimal Decimal::simplify(const Decimal &num) const
 
 ostream &operator<<(ostream &strm, const Decimal &num)
 {
-    Decimal temp = num;
-
-    temp.divideSelf();
-
-    if (!temp.isPositive)
-        strm << "-";
-
-    int noZeroPositions = temp.numerator.getSize() - temp.denominator.getSize() + 1;
-
-    if (noZeroPositions == 0)
-        strm << "0";
-    else if (noZeroPositions < 0)
-    {
-        strm << "0.";
-        for (int i = 0; i < -noZeroPositions; i++)
-            strm << "0";
-    }
-
-    for (int i = 0; i < temp.numerator.getSize(); i++)
-    {
-        if (i == noZeroPositions)
-            strm << ".";
-        strm << temp.numerator[i];
-    }
-    strm << endl;
-
+    string output = num.toString();
+    strm << output << endl;
     return strm;
 }
 

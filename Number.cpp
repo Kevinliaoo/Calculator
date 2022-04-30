@@ -372,7 +372,7 @@ const Number Number::operator/(const Number &number) const
     vector<int> temp_vector;
     if (number == zero)
     {
-        cout << "Error: Can not divide by zero.\n";
+        cout << "[Error]: Can not divide by zero.\n";
         return zero;
     }
     else if (*this == zero)
@@ -437,6 +437,7 @@ const Number Number::operator/(const Number &number) const
                 }
                 now = now * ten + next;
                 remainder = now * one + temp_rem;
+                delete[] y;
             }
             else
                 remainder = now;
@@ -446,7 +447,10 @@ const Number Number::operator/(const Number &number) const
 
         for (int i = 0; i <= beSize - times - OrSize; i++)
         {
-            temp_vector.push_back(0);
+            if (i == beSize - times - OrSize && remainder == divisor)
+                temp_vector.push_back(1);
+            else
+                temp_vector.push_back(0);
         }
 
         delete[] d;

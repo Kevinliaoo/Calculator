@@ -414,11 +414,99 @@ string processStringInput(string input)
     // Detect Powers
     input = solveOperation(input, POW_SIGN);
 
-    // cout << "[log]: Finished power.\n";
-    // cout << input << endl;
+    cout << "[log]: Finished power.\n";
+    cout << input << endl;
 
     // Multiplication and division
-    input = solveBasicOperation(input, MULT_SIGN[0], DIV_SIGN[0]);
+    {
+        string number1_s, number2_s;
+        const char noOperator = '\0';
+        char op = noOperator;
+        int op_index = -1;
+        for (int i = 0; i < input.size(); i++)
+        {
+            if ((input[i] == MULT_SIGN[0] || input[i] == DIV_SIGN[0]) && op == noOperator)
+            {
+                op_index = i;
+                op = input[i];
+            }
+            else
+            {
+                if (input[i] - '0' >= 0 && input[i] - '0' <= 9 || (input[i] == Decimal::decimal_point || input[i] == Decimal::fraction_delimiter))
+                {
+                    if (op != noOperator)
+                        number2_s += input[i];
+                    else
+                        number1_s += input[i];
+                }
+                else if (input[i] == Number::minus_sign && op_index == i - 1)
+                // Negative number detected (second operand)
+                {
+                    number2_s += input[i];
+                }
+                else if ((input[i] == MULT_SIGN[0] || input[i] == DIV_SIGN[0]) && op != noOperator)
+                // Detected another operator, compute the previous one
+                {
+                }
+                else if (input[i] == PLUS_SIGN[0] || input[i] == MIN_SIGN[0])
+                // Plus or minus detected
+                {
+                    if (op == noOperator)
+                    {
+                        number1_s = "";
+                        number2_s = "";
+                    }
+                    else
+                    // Compute the last operator
+                    {
+                        string operation = number1_s + op + number2_s;
+                        if (hasDeicmal)
+                        {
+                            Decimal operand1, operand2;
+                            stringstream ss(number1_s);
+                            ss >> operand1;
+                            ss.clear();
+                            ss.str(number2_s);
+                            ss >> operand2;
+                            Decimal res;
+                            if (op == DIV_SIGN[0])
+                                res = operand1 / operand2;
+                            else if (op == MULT_SIGN[0])
+                                res = operand1 * operand2;
+                            string res_s = res.toFractString();
+                            // Me falta insertar el resultado en el string
+                            /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            */
+                        }
+                        else
+                        {
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     // cout << "[log]: Finished multiplication and division.\n";
     // cout << input << endl;

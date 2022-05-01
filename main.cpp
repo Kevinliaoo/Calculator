@@ -502,7 +502,6 @@ string processStringInput(string input)
     // cout << input << endl;
 
     // Addition and subtraction
-    // Addition and subtraction
     if (hasDeicmal)
     {
         Decimal zero;
@@ -666,8 +665,8 @@ string makeBasicOperation(string input, string number1_s, string number2_s, char
         input = res_s;
     else
     {
-        input.erase(i - op_size + 1, op_size + 1);
-        input.insert(i - op_size + 1, res_s);
+        input.erase(i - op_size, op_size);
+        input.insert(i - op_size, res_s);
     }
 
     return input;

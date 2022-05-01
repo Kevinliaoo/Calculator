@@ -422,7 +422,7 @@ string processStringInput(string input)
         string number1_s, number2_s;
         const char noOperator = '\0';
         char op = noOperator;
-        int op_index = -1;
+        int op_index = -10;
         for (int i = 0; i < input.size(); i++)
         {
             if ((input[i] == MULT_SIGN[0] || input[i] == DIV_SIGN[0]) && op == noOperator)

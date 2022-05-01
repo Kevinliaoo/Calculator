@@ -16,10 +16,10 @@ string getVarValue(map<string, string> &vars, string varName);
 string processStringInput(string input);
 bool checkElementInVector(vector<string> source, string target);
 string solveOperation(string input, string op);
-string solveBasicOperation(string input, char op1, char op2);
 void setDecVariable(map<string, string> &variables, string varName, const Decimal &num);
 void setIntVariable(map<string, string> &variables, string varName, const Integer &num);
 bool inputHasDecimal(string input);
+string makeBasicOperation(string input, string number1_s, string number2_s, char op, int i);
 
 const string SET_STR = "Set";
 const string INTEGER_STR = "Integer";
@@ -414,8 +414,8 @@ string processStringInput(string input)
     // Detect Powers
     input = solveOperation(input, POW_SIGN);
 
-    cout << "[log]: Finished power.\n";
-    cout << input << endl;
+    // cout << "[log]: Finished power.\n";
+    // cout << input << endl;
 
     // Multiplication and division
     {
@@ -440,13 +440,19 @@ string processStringInput(string input)
                         number1_s += input[i];
                 }
                 else if (input[i] == Number::minus_sign && op_index == i - 1)
-                // Negative number detected (second operand)
-                {
+                    // Negative number detected (second operand)
                     number2_s += input[i];
-                }
                 else if ((input[i] == MULT_SIGN[0] || input[i] == DIV_SIGN[0]) && op != noOperator)
                 // Detected another operator, compute the previous one
                 {
+                    // This piece of code computes the operation
+                    input = makeBasicOperation(input, number1_s, number2_s, op, i);
+                    // RESET VALUES
+                    int op_size = number1_s.size() + number2_s.size() + 1;
+                    i -= (op_size + 1);
+                    number1_s = "";
+                    number2_s = "";
+                    op = noOperator;
                 }
                 else if (input[i] == PLUS_SIGN[0] || input[i] == MIN_SIGN[0])
                 // Plus or minus detected
@@ -459,51 +465,33 @@ string processStringInput(string input)
                     else
                     // Compute the last operator
                     {
-                        string operation = number1_s + op + number2_s;
-                        if (hasDeicmal)
-                        {
-                            Decimal operand1, operand2;
-                            stringstream ss(number1_s);
-                            ss >> operand1;
-                            ss.clear();
-                            ss.str(number2_s);
-                            ss >> operand2;
-                            Decimal res;
-                            if (op == DIV_SIGN[0])
-                                res = operand1 / operand2;
-                            else if (op == MULT_SIGN[0])
-                                res = operand1 * operand2;
-                            string res_s = res.toFractString();
-                            // Me falta insertar el resultado en el string
-                            /*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            */
-                        }
-                        else
-                        {
-                        }
+                        // This piece of code computes the operation
+                        input = makeBasicOperation(input, number1_s, number2_s, op, i);
+                        // RESET VALUES
+                        int op_size = number1_s.size() + number2_s.size() + 1;
+                        i -= (op_size + 1);
+                        number1_s = "";
+                        number2_s = "";
+                        op = noOperator;
                     }
                 }
+            }
+        }
+        if (op != noOperator)
+        {
+            if (op == MULT_SIGN[0])
+            {
+                stringstream ssr(input);
+                getline(ssr, number1_s, MULT_SIGN[0]);
+                getline(ssr, number2_s, MULT_SIGN[0]);
+                input = makeBasicOperation(input, number1_s, number2_s, op, input.size() - 1);
+            }
+            else
+            {
+                stringstream ssr(input);
+                getline(ssr, number1_s, DIV_SIGN[0]);
+                getline(ssr, number2_s, DIV_SIGN[0]);
+                input = makeBasicOperation(input, number1_s, number2_s, op, input.size() - 1);
             }
         }
     }
@@ -512,43 +500,12 @@ string processStringInput(string input)
     // cout << input << endl;
 
     // Addition and subtraction
-    input = solveBasicOperation(input, PLUS_SIGN[0], MIN_SIGN[0]);
-
-    // cout << "[log]: Finished addition and subtraction.\n";
-    // cout << input << endl;
-
-    stringstream ssres(input);
-    if (hasDeicmal)
-    {
-        Decimal res;
-        ssres >> res;
-        return res.toFractString();
-    }
-    else
-    {
-        Integer res;
-        ssres >> res;
-        return res.toString();
-    }
-}
-
-string solveBasicOperation(string input, char op1, char op2)
-// Precondition: op1 and op2 ONLY admits two combinations:
-//              Combination 1: + and -
-//              Combination 2: * and /
-//              input is the string which contains the calculation
-{
-    bool hasDeicmal = inputHasDecimal(input);
+    // Addition and subtraction
     if (hasDeicmal)
     {
         Decimal zero;
-        if (op1 == MULT_SIGN[0])
-        {
-            stringstream ss("1");
-            ss >> zero;
-        }
         string num_s;
-        char op = op1;
+        char op = PLUS_SIGN[0];
         stringstream ss;
         for (int i = 0; i < input.size(); i++)
         {
@@ -565,32 +522,22 @@ string solveBasicOperation(string input, char op1, char op2)
                 Decimal temp;
                 ss >> temp;
                 num_s = "";
-                if (op == op1)
-                {
-                    if (op1 == PLUS_SIGN[0])
-                        zero = zero + temp;
-                    else if (op1 == MULT_SIGN[0])
-                        zero = zero * temp;
-                }
-                else if (op == op2)
-                {
-                    if (op2 == MIN_SIGN[0])
-                        zero = zero - temp;
-                    else if (op2 == DIV_SIGN[0])
-                        zero = zero / temp;
-                }
+                if (op == PLUS_SIGN[0])
+                    zero = zero + temp;
+                else if (op == MIN_SIGN[0])
+                    zero = zero - temp;
 
-                if (current == op1)
-                    op = op1;
-                else if (current == op2)
-                    op = op2;
+                if (current == PLUS_SIGN[0])
+                    op = PLUS_SIGN[0];
+                else if (current == MIN_SIGN[0])
+                    op = MIN_SIGN[0];
 
                 char next = input[i + 1];
-                if (next == op1 && i + 1 < input.size())
+                if (next == PLUS_SIGN[0] && i + 1 < input.size())
                     i++;
-                else if (next == op2 && i + 1 < input.size())
+                else if (next == MIN_SIGN[0] && i + 1 < input.size())
                 {
-                    op = op == op1 ? op2 : op1;
+                    op = op == PLUS_SIGN[0] ? MIN_SIGN[0] : PLUS_SIGN[0];
                     i++;
                 }
             }
@@ -600,20 +547,10 @@ string solveBasicOperation(string input, char op1, char op2)
         ss.str(num_s);
         Decimal temp;
         ss >> temp;
-        if (op == op1)
-        {
-            if (op1 == PLUS_SIGN[0])
-                zero = zero + temp;
-            else if (op1 == MULT_SIGN[0])
-                zero = zero * temp;
-        }
-        else if (op == op2)
-        {
-            if (op2 == MIN_SIGN[0])
-                zero = zero - temp;
-            else if (op2 == DIV_SIGN[0])
-                zero = zero / temp;
-        }
+        if (op == PLUS_SIGN[0])
+            zero = zero + temp;
+        else if (op == MIN_SIGN[0])
+            zero = zero - temp;
 
         // cout << "[log]: Finished computation.\n";
         // cout << "[log]: Final result: " << zero;
@@ -623,13 +560,8 @@ string solveBasicOperation(string input, char op1, char op2)
     else
     {
         Integer zero;
-        if (op1 == MULT_SIGN[0])
-        {
-            stringstream ss("1");
-            ss >> zero;
-        }
         string num_s;
-        char op = op1;
+        char op = PLUS_SIGN[0];
         stringstream ss;
         for (int i = 0; i < input.size(); i++)
         {
@@ -646,32 +578,22 @@ string solveBasicOperation(string input, char op1, char op2)
                 Integer temp;
                 ss >> temp;
                 num_s = "";
-                if (op == op1)
-                {
-                    if (op1 == PLUS_SIGN[0])
-                        zero = zero + temp;
-                    else if (op1 == MULT_SIGN[0])
-                        zero = zero * temp;
-                }
-                else if (op == op2)
-                {
-                    if (op2 == MIN_SIGN[0])
-                        zero = zero - temp;
-                    else if (op2 == DIV_SIGN[0])
-                        zero = zero / temp;
-                }
+                if (op == PLUS_SIGN[0])
+                    zero = zero + temp;
+                else if (op == MIN_SIGN[0])
+                    zero = zero - temp;
 
-                if (current == op1)
-                    op = op1;
-                else if (current == op2)
-                    op = op2;
+                if (current == PLUS_SIGN[0])
+                    op = PLUS_SIGN[0];
+                else if (current == MIN_SIGN[0])
+                    op = MIN_SIGN[0];
 
                 char next = input[i + 1];
-                if (next == op1 && i + 1 < input.size())
+                if (next == PLUS_SIGN[0] && i + 1 < input.size())
                     i++;
-                else if (next == op2 && i + 1 < input.size())
+                else if (next == MIN_SIGN[0] && i + 1 < input.size())
                 {
-                    op = op == op1 ? op2 : op1;
+                    op = op == PLUS_SIGN[0] ? MIN_SIGN[0] : PLUS_SIGN[0];
                     i++;
                 }
             }
@@ -681,26 +603,66 @@ string solveBasicOperation(string input, char op1, char op2)
         ss.str(num_s);
         Integer temp;
         ss >> temp;
-        if (op == op1)
-        {
-            if (op1 == PLUS_SIGN[0])
-                zero = zero + temp;
-            else if (op1 == MULT_SIGN[0])
-                zero = zero * temp;
-        }
-        else if (op == op2)
-        {
-            if (op2 == MIN_SIGN[0])
-                zero = zero - temp;
-            else if (op2 == DIV_SIGN[0])
-                zero = zero / temp;
-        }
+        if (op == PLUS_SIGN[0])
+            zero = zero + temp;
+        else if (op == MIN_SIGN[0])
+            zero = zero - temp;
 
         // cout << "[log]: Finished computation.\n";
         // cout << "[log]: Final result: " << zero;
 
         return zero.toString();
     }
+}
+
+string makeBasicOperation(string input, string number1_s, string number2_s, char op, int i)
+{
+    stringstream ss1(number1_s);
+    stringstream ss2(number2_s);
+
+    bool hasDecimal = inputHasDecimal(number1_s) || inputHasDecimal(number2_s);
+    string res_s;
+    if (hasDecimal)
+    {
+        Decimal number1, number2, res;
+        ss1 >> number1;
+        ss2 >> number2;
+        if (op == MULT_SIGN[0])
+            res = number1 * number2;
+        else if (op == DIV_SIGN[0])
+            res = number1 / number2;
+        else if (op == PLUS_SIGN[0])
+            res = number1 + number2;
+        else if (op == MIN_SIGN[0])
+            res = number1 - number2;
+        res_s = res.toFractString();
+    }
+    else
+    {
+        Integer number1, number2, res;
+        ss1 >> number1;
+        ss2 >> number2;
+        if (op == MULT_SIGN[0])
+            res = number1 * number2;
+        else if (op == DIV_SIGN[0])
+            res = number1 / number2;
+        else if (op == PLUS_SIGN[0])
+            res = number1 + number2;
+        else if (op == MIN_SIGN[0])
+            res = number1 - number2;
+        res_s = res.toString();
+    }
+
+    int op_size = number1_s.size() + number2_s.size() + 1;
+    if (op_size == input.size())
+        input = res_s;
+    else
+    {
+        input.erase(i - op_size, op_size);
+        input.insert(i - op_size, res_s);
+    }
+
+    return input;
 }
 
 string solveOperation(string input, string op)

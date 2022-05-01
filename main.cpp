@@ -487,8 +487,6 @@ string processStringInput(string input)
             else
             {
                 stringstream ssr(input);
-                getline(ssr, number1_s, DIV_SIGN[0]);
-                getline(ssr, number2_s, DIV_SIGN[0]);
                 input = makeBasicOperation(input, number1_s, number2_s, op, input.size() - 1);
             }
         }
@@ -662,8 +660,8 @@ string makeBasicOperation(string input, string number1_s, string number2_s, char
         input = res_s;
     else
     {
-        input.erase(i - op_size, op_size);
-        input.insert(i - op_size, res_s);
+        input.erase(i - op_size + 1, op_size + 1);
+        input.insert(i - op_size + 1, res_s);
     }
 
     return input;

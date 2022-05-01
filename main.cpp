@@ -304,6 +304,12 @@ string processStringInput(string input)
         }
     }
 
+    if (parenthesis_stack.size() != 0)
+    {
+        cout << "[Error]: Invalid input (parenthesis does not match).\n";
+        return "";
+    }
+
     // cout << "[log]: Starting arithmetic operations.\n";
     // cout << input << endl;
 

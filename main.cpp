@@ -482,8 +482,6 @@ string processStringInput(string input)
             if (op == MULT_SIGN[0])
             {
                 stringstream ssr(input);
-                getline(ssr, number1_s, MULT_SIGN[0]);
-                getline(ssr, number2_s, MULT_SIGN[0]);
                 input = makeBasicOperation(input, number1_s, number2_s, op, input.size() - 1);
             }
             else

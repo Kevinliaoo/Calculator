@@ -616,6 +616,12 @@ string processStringInput(string input)
 }
 
 string makeBasicOperation(string input, string number1_s, string number2_s, char op, int i)
+// Solves multiplications or division
+// Precondition: input is the calculation
+//               number1_s and number2_s are the operands
+//               op is the operation to be performed
+//               i is the index where it is standed
+// Postcondition: Returns the same input string with the operation computed
 {
     stringstream ss1(number1_s);
     stringstream ss2(number2_s);

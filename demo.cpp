@@ -1,4 +1,11 @@
 #include <iostream>
+#include <sstream>
+#include <string>
+#include "Number.h"
+
+using namespace std;
+
+#include <iostream>
 #include <vector>
 #include <map>
 #include <string>
@@ -44,79 +51,28 @@ map<string, string> variables;
 
 int main()
 {
-    printInstructions();
+    Integer x;
+    Decimal y;
 
-    // Setting up special symbols (I can not use the vector constructor)
-    SPECIAL_SYMBOLS.push_back(PLUS_SIGN);
-    SPECIAL_SYMBOLS.push_back(MIN_SIGN);
-    SPECIAL_SYMBOLS.push_back(MULT_SIGN);
-    SPECIAL_SYMBOLS.push_back(DIV_SIGN);
-    SPECIAL_SYMBOLS.push_back(FACT_SIGN);
-    SPECIAL_SYMBOLS.push_back(POW_SIGN);
-    SPECIAL_SYMBOLS.push_back(OPAR_SIGN);
-    SPECIAL_SYMBOLS.push_back(CPAR_SIGN);
-    SPECIAL_SYMBOLS.push_back(DOT_SIGN);
-    SPECIAL_SYMBOLS.push_back(COMMA_SIGN);
-    SPECIAL_SYMBOLS.push_back(POWER_KWORD);
-    SPECIAL_SYMBOLS.push_back(FACT_KWORD);
+    cin >> x; // 輸入 123456789
+    cin >> y; // 輸入 3.1415926
 
-    string inputMessage;
-    stringstream ss;
+    cout << x + y << endl;
+    cout << x - y << endl;
+    cout << x * y << endl;
+    cout << x / y << endl;
 
-    cout << "> ";
+    stringstream ssx("123 * 8 + 456");
+    ssx >> x;
 
-    while (getline(cin, inputMessage))
-    {
-        ss.str(inputMessage);
+    stringstream ssy("-1.0 / 3 - 45 / 13.0");
+    ssy >> y;
 
-        if (inputMessage.substr(0, 3) == SET_STR)
-        // Set a variable
-        {
-            string datatype, varName, eqSign, value;
-            ss >> eqSign >> datatype >> varName >> eqSign;
-
-            if (datatype == INTEGER_STR)
-                setIntVariable(variables, varName, makeIntCalculation(ss));
-            // variables.insert(pair<string, string>(varName, makeIntCalculation(ss)));
-            else if (datatype == DECIMAL_STR)
-                setDecVariable(variables, varName, makeDecCalculation(ss));
-            // variables.insert(pair<string, string>(varName, makeDecCalculation(ss)));
-            else
-            {
-                cout << "[Error]: Invalid datatype (at main.cpp).";
-                continue;
-            }
-        }
-        else if (inputMessage.substr(0, VARIABLES.size()) == VARIABLES)
-            printVariables(variables);
-        else
-        {
-            cout << ss.str() << " = \n";
-            string input, temp;
-            while (ss >> temp)
-                input += temp;
-            string res = processStringInput(input);
-            bool hasDeicmal = inputHasDecimal(res);
-            ss.clear();
-            ss.str(res);
-            if (hasDeicmal)
-            {
-                Decimal f_result;
-                ss >> f_result;
-                cout << f_result;
-            }
-            else
-            {
-                Integer f_result;
-                ss >> f_result;
-                cout << f_result;
-            }
-            cout << endl;
-        }
-
-        ss.clear();
-        cout << "> ";
-    }
+    vector<Decimal> nums;
+    nums.push_back(x);
+    nums.push_back(y);
+    for (const auto &num : nums)
+        cout << num << endl;
 }
 
 void printInstructions()
@@ -488,11 +444,7 @@ string processStringInput(string input)
             if (op == MULT_SIGN[0])
             {
                 stringstream ssr(input);
-                cout << "Input before: \n"
-                     << input << endl;
                 input = makeBasicOperation(input, number1_s, number2_s, op, input.size() - 1);
-                cout << "Input after: \n"
-                     << input << endl;
             }
             else
             {
@@ -670,11 +622,7 @@ string makeBasicOperation(string input, string number1_s, string number2_s, char
     else
     {
         input.erase(i - op_size, op_size);
-        // cout << "Mid: \n"
-        //  << input << endl;
-        // cout << "To insert: " << res_s << endl;
         input.insert(i - op_size, res_s);
-        // cout << "After: " << input << endl;
     }
 
     return input;

@@ -15,10 +15,26 @@ const Integer Integer::operator+(const Integer &integer) const
     return Integer(newNum);
 }
 
+const Decimal Integer::operator+(const Decimal &decimal) const
+{
+    Decimal me(this->numerator);
+
+    me = me + decimal;
+    return me;
+}
+
 const Integer Integer::operator-(const Integer &integer) const
 {
     Number newNum = this->numerator - integer.numerator;
     return Integer(newNum);
+}
+
+const Decimal Integer::operator-(const Decimal &decimal) const
+{
+    Decimal me(this->numerator);
+
+    me = me - decimal;
+    return me;
 }
 
 const Integer Integer::operator-() const
@@ -33,11 +49,27 @@ const Integer Integer::operator*(const Integer &integer) const
     return Integer(newNum);
 }
 
+const Decimal Integer::operator*(const Decimal &decimal) const
+{
+    Decimal me(this->numerator);
+
+    me = me * decimal;
+    return me;
+}
+
 const Integer Integer::operator/(const Integer &integer) const
 {
     Number newNum = this->numerator / integer.numerator;
     Integer res(newNum);
     return res;
+}
+
+const Decimal Integer::operator/(const Decimal &decimal) const
+{
+    Decimal me(this->numerator);
+
+    me = me / decimal;
+    return me;
 }
 
 Integer &Integer::operator=(const Integer &integer)

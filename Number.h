@@ -103,10 +103,14 @@ public:
     Integer(const Number &num);
 
     const Integer operator+(const Integer &integer) const;
+    const Decimal operator+(const Decimal &decimal) const;
     const Integer operator-(const Integer &integer) const;
+    const Decimal operator-(const Decimal &decimal) const;
     const Integer operator-() const;
     const Integer operator*(const Integer &integer) const;
+    const Decimal operator*(const Decimal &decimal) const;
     const Integer operator/(const Integer &integer) const;
+    const Decimal operator/(const Decimal &decimal) const;
     Integer &operator=(const Integer &integer);
     bool operator==(const Integer &integer) const;
 

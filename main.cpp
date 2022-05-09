@@ -488,11 +488,7 @@ string processStringInput(string input)
             if (op == MULT_SIGN[0])
             {
                 stringstream ssr(input);
-                cout << "Input before: \n"
-                     << input << endl;
                 input = makeBasicOperation(input, number1_s, number2_s, op, input.size() - 1);
-                cout << "Input after: \n"
-                     << input << endl;
             }
             else
             {
@@ -669,12 +665,19 @@ string makeBasicOperation(string input, string number1_s, string number2_s, char
         input = res_s;
     else
     {
-        input.erase(i - op_size, op_size);
-        // cout << "Mid: \n"
-        //  << input << endl;
-        // cout << "To insert: " << res_s << endl;
-        input.insert(i - op_size, res_s);
-        // cout << "After: " << input << endl;
+        int size_before = input.size();
+        if (i == size_before - 1)
+        // The last operation of the line (i is 1 smaller)
+        {
+            input.erase(i - op_size + 1, op_size);
+            input += res_s;
+        }
+        else
+        // i is one unit more (there is more computation)
+        {
+            input.erase(i - op_size, op_size);
+            input.insert(i - op_size, res_s);
+        }
     }
 
     return input;

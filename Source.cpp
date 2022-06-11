@@ -11,16 +11,25 @@ map<string, double> variables;
 int main()
 {
 
-    // cout << calculate("90/(90/10)-2*sin(100-10)+1") << endl;
-    cout << calculate("5*tan(100+60--20)+1") << endl;
-
+    // 宣告變數
     setVariable(variables, "ABC", 30);
-    setVariable(variables, "K", 0.9);
+    setVariable(variables, "K", 45);
+    // X 當作變數，要宣告
+    setVariable(variables, "X", 10);
 
-    string expression = "3*ABC+sin(K)*(12+K)";
-    if (checkParenthesis(expression))
+    // 輸入
+    string expression = "X+3*ABC+sin(K)*(12+K)";
+
+    try
     {
+        // 把變數帶進去（包括X）
         string input = replaceVariables(expression, variables);
-        cout << input << endl;
+        double res = calculate(input);
+        cout << "The result: " << res << endl;
+    }
+    catch (const char *e)
+    {
+        // 如果有輸入格式錯誤會噴 error
+        cout << "[Error]: " << e << endl;
     }
 }

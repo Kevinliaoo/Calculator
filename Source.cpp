@@ -13,6 +13,8 @@ int main()
 
     // 宣告變數
     setVariable(variables, "ABC", 30);
+    setVariable(variables, "K", 90);
+    // 重寫會把他蓋過去
     setVariable(variables, "K", 45);
     // X 當作變數，要宣告
     setVariable(variables, "X", 10);
@@ -24,8 +26,9 @@ int main()
     {
         // 把變數帶進去（包括X）
         string input = replaceVariables(expression, variables);
-        double res = calculate(input);
-        cout << "The result: " << res << endl;
+        cout << "Input: " << input << endl;
+        string res = calculate(input);
+        cout << "Result: " << res << endl;
     }
     catch (const char *e)
     {

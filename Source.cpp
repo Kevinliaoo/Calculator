@@ -40,7 +40,7 @@ int main()
     Function f;
     string input = "X+4";
 
-    f.setVariable("X", -8);
+    f.setVariable("X", -10);
     string a = f.replaceVariables(input);
     cout << f.calculate(a) << endl;
 }

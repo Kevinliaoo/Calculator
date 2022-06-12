@@ -439,6 +439,7 @@ string Function::replaceVariables(string input)
                 else if (variableExists(word, this->variables))
                 {
                     double v = this->variables[word];
+                    // Save
                     string v_s = to_string(v);
 
                     input.erase(i - word.size(), word.size());

@@ -6,18 +6,18 @@
 
 using namespace std;
 
-map<string, double> variables;
-
 int main()
 {
 
+    Function f;
+
     // 宣告變數
-    setVariable(variables, "ABC", 30);
-    setVariable(variables, "K", 90);
+    f.setVariable("ABC", 30);
+    f.setVariable("K", 90);
     // 重寫會把他蓋過去
-    setVariable(variables, "K", 45);
+    f.setVariable("K", 45);
     // X 當作變數，要宣告
-    setVariable(variables, "X", 10);
+    f.setVariable("X", 10);
 
     // 輸入
     string expression = "X+3*ABC+sin(K)*(12+K)";
@@ -25,9 +25,9 @@ int main()
     try
     {
         // 把變數帶進去（包括X）
-        string input = replaceVariables(expression, variables);
+        string input = f.replaceVariables(expression);
         cout << "Input: " << input << endl;
-        string res = calculate(input);
+        string res = f.calculate(input);
         cout << "Result: " << res << endl;
     }
     catch (const char *e)

@@ -8,6 +8,18 @@
 
 using namespace std;
 
+char Function::OPEN_PAR = '(';
+char Function::CLOSE_PAR = ')';
+char Function::PLUS = '+';
+char Function::MINUS = '-';
+char Function::MULT = '*';
+char Function::DIV = '/';
+char Function::FACT = '!';
+char Function::EXPO = '^';
+string Function::SINE = "sin";
+string Function::COSINE = "cos";
+string Function::TANGENT = "tan";
+
 string Function::calculate(string input)
 {
     if (!checkParenthesis(input) || !checkSintaxis(input))
@@ -21,12 +33,12 @@ string Function::calculate(string input)
     {
         char c = input[i];
 
-        if (c == '(')
+        if (c == OPEN_PAR)
         {
             p_stack.push_back(c);
             p_index.push_back(i);
         }
-        if (c == ')')
+        if (c == CLOSE_PAR)
         {
             int j = p_index.back();
             string subInput = input.substr(j + 1, i - j - 1);
@@ -37,14 +49,14 @@ string Function::calculate(string input)
             if (j > 2)
             {
                 string prev = input.substr(j - 3, 3);
-                if (prev == "sin" || prev == "cos" || prev == "tan")
+                if (prev == SINE || prev == COSINE || prev == TANGENT)
                     isTrig = true;
 
-                if (prev == "sin")
+                if (prev == SINE)
                     trigFunct = 1;
-                else if (prev == "cos")
+                else if (prev == COSINE)
                     trigFunct = 2;
-                else if (prev == "tan")
+                else if (prev == TANGENT)
                     trigFunct = 3;
             }
 
@@ -103,9 +115,9 @@ string Function::solvePlus(string input)
     string num_s = "0";
     double zero = 0;
 
-    const char plusOp = '+';
-    const char minOp = '-';
-    char op = '+';
+    const char plusOp = PLUS;
+    const char minOp = MINUS;
+    char op = PLUS;
 
     for (int i = 0; i < input.size(); i++)
     {
@@ -153,10 +165,10 @@ string Function::solveMultDiv(string input)
 {
     string number1_s, number2_s;
     const char noOperator = '\0';
-    const char multOp = '*';
-    const char divOp = '/';
-    const char minOp = '-';
-    const char plusOp = '+';
+    const char multOp = MULT;
+    const char divOp = DIV;
+    const char minOp = MINUS;
+    const char plusOp = PLUS;
 
     char op = noOperator;
     int op_index = -10;
@@ -244,13 +256,13 @@ string Function::makeBasicOperation(string input, string number1_s, string numbe
 {
     double res;
 
-    if (op == '*')
+    if (op == MULT)
         res = stod(number1_s) * stod(number2_s);
-    else if (op == '/')
+    else if (op == DIV)
         res = stod(number1_s) / stod(number2_s);
-    else if (op == '+')
+    else if (op == PLUS)
         res = stod(number1_s) + stod(number2_s);
-    else if (op == '-')
+    else if (op == MINUS)
         res = stod(number1_s) - stod(number2_s);
 
     string res_s = to_string(res);
@@ -284,7 +296,7 @@ string Function::solvePower(string input)
 // Precondition: string expression
 // Postcondition: expression with power calculated
 {
-    const char exp_op = '^';
+    const char exp_op = EXPO;
 
     while (true)
     {
@@ -315,7 +327,7 @@ string Function::solvePower(string input)
         {
             if (isOperator(temp2[i]))
             {
-                if (i == 0 && temp2[i] == '-')
+                if (i == 0 && temp2[i] == MINUS)
                     fact2_s += temp2[i];
                 else
                     break;
@@ -353,7 +365,7 @@ string Function::solveFactorial(string input)
         {
             bool factCalculated = false;
 
-            if (c == '!')
+            if (c == FACT)
             {
                 string subInput = input.substr(lastOperatorIndex + 1, i - lastOperatorIndex - 1);
 
@@ -363,7 +375,7 @@ string Function::solveFactorial(string input)
                 int num = stoi(subInput);
                 num = factorial(num);
 
-                subInput += '!';
+                subInput += FACT;
                 input.erase(lastOperatorIndex + 1, subInput.size());
                 input.insert(lastOperatorIndex + 1, to_string(num));
                 factCalculated = true;
@@ -494,9 +506,9 @@ vector<string> Function::getKeywords()
 // Keyword: Reserved name that can not used as variable name
 {
     vector<string> kwords;
-    kwords.push_back("sin");
-    kwords.push_back("cos");
-    kwords.push_back("tan");
+    kwords.push_back(SINE);
+    kwords.push_back(COSINE);
+    kwords.push_back(TANGENT);
     kwords.push_back("y");
 
     return kwords;
@@ -514,10 +526,10 @@ bool Function::checkParenthesis(string input)
     {
         char c = input[i];
 
-        if (c == '(')
+        if (c == OPEN_PAR)
             p_stack.push_back(c);
 
-        else if (c == ')')
+        else if (c == CLOSE_PAR)
         {
             if (p_stack.size() == 0)
                 return false;
@@ -541,25 +553,25 @@ bool Function::checkSintaxis(string input)
 
         if (i == input.size() - 1)
         {
-            if (isOperator(c) && c != '!')
+            if (isOperator(c) && c != FACT)
                 return false;
         }
         else if (isOperator(c))
         {
-            if (input[i - 1] == ')' || input[i + 1] == '(')
+            if (input[i - 1] == CLOSE_PAR || input[i + 1] == OPEN_PAR)
                 continue;
         }
-        else if (c == '+' || c == '-')
+        else if (c == PLUS || c == MINUS)
         {
             if (!isDigit(input[i + 1]))
                 return false;
         }
-        else if (c == '*' || c == '/' || c == '.')
+        else if (c == MULT || c == DIV || c == '.')
         {
             if (!isDigit(input[i - 1]) || !isDigit(input[i + 1]))
                 return false;
         }
-        else if (c == '!')
+        else if (c == FACT)
         {
             if (!isDigit(input[i - 1]) || !isOperator(input[i + 1]))
                 return false;
@@ -611,7 +623,7 @@ bool Function::isCharacter(char c)
 bool Function::isOperator(char c)
 // Returns true if a given character is an operator
 {
-    if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '!')
+    if (c == PLUS || c == MINUS || c == MULT || c == DIV || c == EXPO || c == FACT)
         return true;
 
     return false;

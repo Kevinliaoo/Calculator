@@ -5,6 +5,18 @@ using namespace std;
 class Function
 {
 private:
+    static char OPEN_PAR;
+    static char CLOSE_PAR;
+    static char PLUS;
+    static char MINUS;
+    static char MULT;
+    static char DIV;
+    static char FACT;
+    static char EXPO;
+    static string SINE;
+    static string COSINE;
+    static string TANGENT;
+
     map<string, double> variables;
 
     bool checkParenthesis(string input);

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 #include <map>
 #include <string>
@@ -438,9 +439,10 @@ string Function::replaceVariables(string input)
                 else if (variableExists(word, this->variables))
                 {
                     double v = this->variables[word];
+                    string v_s = to_string(v);
 
                     input.erase(i - word.size(), word.size());
-                    input.insert(i - word.size(), to_string(v));
+                    input.insert(i - word.size(), v_s);
                     word = "";
 
                     i = wordStartIndex;

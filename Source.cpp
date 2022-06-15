@@ -38,9 +38,12 @@ int main()
     */
 
     Function f;
-    string input = "X+4";
+    string input = "-X^2";
 
-    f.setVariable("X", -10);
-    string a = f.replaceVariables(input);
-    cout << f.calculate(a) << endl;
+    for (int i = -5; i < 5; i++)
+    {
+        f.setVariable("X", i);
+        string a = f.replaceVariables(input);
+        cout << f.calculate(a) << endl;
+    }
 }

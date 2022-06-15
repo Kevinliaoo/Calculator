@@ -109,6 +109,8 @@ double Function::solveTrig(double input, int function)
         return cos(angle);
     else if (function == 3)
         return tan(angle);
+    else
+        return 0;
 }
 
 string Function::solvePlus(string input)
@@ -211,8 +213,13 @@ string Function::solveMultDiv(string input)
             {
                 if (op == noOperator)
                 {
-                    number1_s = "";
-                    number2_s = "";
+                    if (c == MINUS)
+                        number1_s += c;
+                    else
+                    {
+                        number1_s = "";
+                        number2_s = "";
+                    }
                 }
                 else
                 // Compute the last operator

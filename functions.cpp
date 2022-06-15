@@ -101,14 +101,14 @@ double Function::solveTrig(double input, int function)
 //                        2. cosine
 //                        3. tangent
 {
-    double angle = degToRad(input);
+    // double angle = degToRad(input);
 
     if (function == 1)
-        return sin(angle);
+        return sin(input);
     else if (function == 2)
-        return cos(angle);
+        return cos(input);
     else if (function == 3)
-        return tan(angle);
+        return tan(input);
     else
         return 0;
 }

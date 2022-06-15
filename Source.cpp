@@ -38,7 +38,7 @@ int main()
     */
 
     Function f;
-    string input = "-X^2";
+    string input = "sin(X)";
 
     for (int i = -5; i < 5; i++)
     {

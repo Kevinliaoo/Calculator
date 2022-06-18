@@ -1,10 +1,4 @@
 #include <iostream>
-#include <vector>
-#include <map>
-#include <string>
-#include <string.h>
-#include <cmath>
-#include <sstream>
 #include "functions.h"
 
 using namespace std;
@@ -23,8 +17,10 @@ string Function::TANGENT = "tan";
 
 string Function::calculate(string input)
 {
+
+    // || !checkSintaxis(input)
     if (!checkParenthesis(input) || !checkSintaxis(input))
-        throw "Sintaxis error.";
+        return "Error";
 
     vector<char> p_stack;
     vector<int> p_index;
@@ -304,18 +300,18 @@ string Function::solvePower(string input)
 // Precondition: string expression
 // Postcondition: expression with power calculated
 {
-    const char exp_op = EXPO;
+    cout << "the input: " << input << endl;
 
     while (true)
     {
         string temp1, temp2;
         stringstream ss(input);
 
-        getline(ss, temp1, exp_op);
+        getline(ss, temp1, EXPO);
         if (temp1.size() == input.size())
             break;
 
-        getline(ss, temp2, exp_op);
+        getline(ss, temp2, EXPO);
 
         int cut_start = temp1.size();
         string fact1_s, fact2_s;
@@ -323,7 +319,14 @@ string Function::solvePower(string input)
         for (int i = temp1.size() - 1; i >= 0; i--)
         {
             if (isOperator(temp1[i]))
+            {
+                // if (temp1[i] == MINUS)
+                // {
+                //     fact1_s = temp1[i] + fact1_s;
+                //     cut_start--;
+                // }
                 break;
+            }
             else
             {
                 fact1_s = temp1[i] + fact1_s;
@@ -336,7 +339,9 @@ string Function::solvePower(string input)
             if (isOperator(temp2[i]))
             {
                 if (i == 0 && temp2[i] == MINUS)
+                {
                     fact2_s += temp2[i];
+                }
                 else
                     break;
             }
@@ -354,7 +359,8 @@ string Function::solvePower(string input)
         ss.clear();
         ss.str(input);
     }
-
+    if (input.find("-nan(ind)") != string::npos || input.find("inf") != string::npos)
+        throw 2;
     return input;
 }
 
@@ -378,7 +384,7 @@ string Function::solveFactorial(string input)
                 string subInput = input.substr(lastOperatorIndex + 1, i - lastOperatorIndex - 1);
 
                 if (isDecimal(subInput))
-                    throw "Can not solve factorial of a decimal number.";
+                    return "Error";
 
                 int num = stoi(subInput);
                 num = factorial(num);
@@ -457,10 +463,7 @@ string Function::replaceVariables(string input)
                 }
                 else
                 {
-                    string err_msg = "Variable ";
-                    err_msg += word;
-                    err_msg += " does not exist.";
-                    throw err_msg;
+                    return "Error";
                 }
             }
         }
@@ -478,10 +481,7 @@ string Function::replaceVariables(string input)
         }
         else
         {
-            string err_msg = "Variable ";
-            err_msg += word;
-            err_msg += " does not exist.";
-            throw err_msg;
+            return "Error";
         }
     }
 
@@ -531,21 +531,25 @@ bool Function::checkParenthesis(string input)
 // Postcondition: Returns true if the parenthesis are well formed
 {
     vector<char> p_stack;
-
+    bool next = false;
     for (int i = 0; i < input.size(); i++)
     {
         char c = input[i];
 
         if (c == OPEN_PAR)
+        {
             p_stack.push_back(c);
-
+            next = true;
+        }
         else if (c == CLOSE_PAR)
         {
-            if (p_stack.size() == 0)
+            if (p_stack.size() == 0 || next)
                 return false;
             else
                 p_stack.pop_back();
         }
+        else
+            next = false;
     }
 
     if (p_stack.size() != 0)
@@ -561,30 +565,48 @@ bool Function::checkSintaxis(string input)
     {
         char c = input[i];
 
-        if (i == input.size() - 1)
+        // Check first digit
+        if (i == 0)
+        {
+            if (isOperator(c) && c != MINUS)
+                return false;
+            if (c == CLOSE_PAR)
+                return false;
+        }
+        // Check last digit
+        else if (i == input.size() - 1)
         {
             if (isOperator(c) && c != FACT)
                 return false;
-        }
-        else if (isOperator(c))
-        {
-            if (input[i - 1] == CLOSE_PAR || input[i + 1] == OPEN_PAR)
-                continue;
-        }
-        else if (c == PLUS || c == MINUS)
-        {
-            if (!isDigit(input[i + 1]))
+            if (c == OPEN_PAR)
                 return false;
         }
-        else if (c == MULT || c == DIV || c == '.')
+        else
         {
-            if (!isDigit(input[i - 1]) || !isDigit(input[i + 1]))
-                return false;
-        }
-        else if (c == FACT)
-        {
-            if (!isDigit(input[i - 1]) || !isOperator(input[i + 1]))
-                return false;
+            char n = input[i + 1];
+            char p = input[i - 1];
+
+            if (c == PLUS || c == MINUS)
+            {
+                if (n == FACT || n == DIV || n == MULT || n == EXPO)
+                    return false;
+            }
+
+            if (c == MULT || c == DIV || c == '.')
+            {
+                if (isOperator(p) && p != FACT)
+                    return false;
+                if (isOperator(n) && n != MINUS)
+                    return false;
+            }
+
+            if (c == FACT)
+            {
+                if (!isDigit(p))
+                    return false;
+                if (isOperator(p) && p != FACT)
+                    return false;
+            }
         }
     }
 

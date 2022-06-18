@@ -38,12 +38,19 @@ int main()
     */
 
     Function f;
-    string input = "sin(X)";
+    string input;
 
-    for (int i = -5; i < 5; i++)
+    while (cin >> input)
     {
-        f.setVariable("X", i);
+        f.setVariable("x", -10);
+        f.setVariable("a", -1.5);
+        f.setVariable("b", -0.5);
+
         string a = f.replaceVariables(input);
-        cout << f.calculate(a) << endl;
+
+        if (a != "Error")
+            cout << f.calculate(a) << endl;
+        else
+            cout << a << endl;
     }
 }

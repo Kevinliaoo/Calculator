@@ -1,7 +1,10 @@
+#pragma once
+#include <vector>
+#include <string>
+#include <cmath>
+#include <sstream>
+#include <map>
 using namespace std;
-
-#ifndef FUNCTION_H
-#define FUNCTION_H
 class Function
 {
 private:
@@ -44,4 +47,3 @@ public:
     string replaceVariables(string input);
     string calculate(string input);
 };
-#endif
